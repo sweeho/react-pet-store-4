@@ -1,0 +1,508 @@
+records:
+  - record_key: CART-REQ-0001
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL add a single item to the shopping cart with a default quantity
+      of 1 when the addItem(itemID) method is invoked.
+    confidence: high
+    confidence_basis: >
+      The requirement is enforced by both the declarative interface (ShoppingCartLocal)
+      and the implementation (ShoppingCartLocalEJB). The implementation explicitly
+      creates an Integer(1) for the quantity. No ambiguity is present.
+    risk_class: operational
+    basis: >
+      The addItem(String itemID) method in ShoppingCartLocalEJB (line 111-113) stores
+      the item in the cart HashMap with a default quantity of 1. This is the public
+      interface method exposed through ShoppingCartLocal (line 61).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 111
+        line_end: 113
+        excerpt: |
+          public void addItem (String itemID) {
+              cart.put(itemID, new Integer(1));
+          }
+
+  - record_key: CART-REQ-0002
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL add an item to the shopping cart with an explicit quantity
+      when the addItem(itemID, qty) method is invoked.
+    confidence: high
+    confidence_basis: >
+      This is a separate overloaded method explicitly defined in both interface and
+      implementation. The logic is straightforward: no ambiguity.
+    risk_class: operational
+    basis: >
+      The overloaded addItem(String itemID, int qty) method (line 115-117) allows
+      callers to specify the quantity explicitly. This method bypasses the default
+      quantity of 1 and uses the provided value.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 115
+        line_end: 117
+        excerpt: |
+          public void addItem (String itemID,int qty) {
+              cart.put(itemID, new Integer(qty));
+          }
+
+  - record_key: CART-REQ-0003
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL remove an item from the shopping cart when the deleteItem(itemID)
+      method is invoked.
+    confidence: high
+    confidence_basis: >
+      Declarative interface and implementation agree. HashMap.remove() is the only
+      operation performed. No ambiguity.
+    risk_class: operational
+    basis: >
+      The deleteItem(String itemID) method (line 119-121) removes the item from the
+      cart HashMap using the remove() operation. The itemID parameter is the key.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 119
+        line_end: 121
+        excerpt: |
+          public void deleteItem (String itemID) {
+              cart.remove(itemID);
+          }
+
+  - record_key: CART-REQ-0004
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL update the quantity of an existing item in the shopping cart.
+      If the new quantity is greater than zero, the item SHALL remain in the cart with
+      the updated quantity. If the new quantity is less than or equal to zero, the item
+      SHALL be removed from the cart.
+    confidence: high
+    confidence_basis: >
+      The business rule is enforced in the updateItemQuantity implementation through
+      an explicit conditional check. The behavior is clear and unambiguous. The condition
+      (newQty > 0) is the only logic present.
+    risk_class: operational
+    basis: >
+      The updateItemQuantity(String itemID, int newQty) method (line 123-127) first
+      removes the item from the cart, then re-adds it only if newQty > 0. This implements
+      the rule that zero or negative quantities result in item removal.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 123
+        line_end: 127
+        excerpt: |
+          public void updateItemQuantity (String itemID, int newQty) {
+              cart.remove(itemID);
+              // remove item if it is less than or equal to 0
+              if (newQty > 0) cart.put(itemID, new Integer(newQty));
+          }
+
+  - record_key: CART-REQ-0005
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL calculate the shopping cart subtotal by multiplying the unit cost
+      of each item by its quantity and summing across all items in the cart.
+    confidence: high
+    confidence_basis: >
+      The calculation is enforced in the getSubTotal() method and is the only place
+      subtotal is computed. The formula is explicit: sum(quantity * unitCost).
+    risk_class: financial
+    basis: >
+      The getSubTotal() method (line 133-144) iterates through all CartItems, computes
+      item.getQuantity() * item.getUnitCost() for each, and accumulates the sum. The
+      calculation is performed in Java double precision.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 133
+        line_end: 144
+        excerpt: |
+          public Double getSubTotal() {
+              Collection items = getItems();
+              if (items == null) return null;
+              // put the subtotal in the request
+              double ret = 0.0d;
+              // total up the quantities
+              for (Iterator it =items.iterator(); it.hasNext(); ) {
+                  CartItem i = (CartItem) it.next();
+                  ret += (i.getUnitCost() * i.getQuantity()) ;
+              }
+              return new Double(ret);
+          }
+
+  - record_key: CART-REQ-0006
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL fetch product details (name, category, attribute, unit cost)
+      from the catalog component for each item in the shopping cart when the getItems()
+      method is invoked. The catalog lookup SHALL be performed using the item ID and
+      the current locale setting.
+    confidence: medium
+    confidence_basis: >
+      The integration with the catalog is enforced in code and works in both directions
+      (cart has a method to get items; catalog is called from cart). However, the
+      method uses a non-blocking CatalogException catch block that silently suppresses
+      errors, leaving error handling behavior ambiguous.
+    risk_class: operational
+    basis: >
+      The getItems() method (line 83-109) instantiates a CatalogHelper with false
+      (local EJB access), then calls catalog.getItem(key, locale) for each item ID
+      in the cart. CartItem objects are constructed from the returned Item objects.
+      Any CatalogException is caught and printed to System.out but not re-thrown.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 83
+        line_end: 109
+        excerpt: |
+          public Collection getItems() {
+              // get a catalog helper using local EJB Access
+              CatalogHelper catalog = new CatalogHelper(false);
+              HashMap map = getDetails();
+              ArrayList items = new ArrayList();
+              Iterator it = map.keySet().iterator();
+              while (it.hasNext()) {
+                  String key = (String)it.next();
+                  Integer value = (Integer)map.get(key);
+                  Item item = null;
+                  try {
+                      item = catalog.getItem(key, locale);
+                      // convert catalog item to cart item
+                      CartItem ci = new CartItem(item.getItemId(),
+                                             item.getProductId(),
+                                             item.getCategory(),
+                                             item.getProductName(),
+                                             item.getAttribute(),
+                                             value.intValue(),
+                                             item.getListCost());
+                      items.add(ci);
+                  } catch (CatalogException cce) {
+                      System.out.println("ShoppingCartEJB caught: " + cce);
+                  }
+              }
+              return items;
+          }
+
+  - record_key: CART-REQ-0007
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL return the total number of distinct items (unique itemIDs)
+      currently in the shopping cart when the getCount() method is invoked.
+    confidence: high
+    confidence_basis: >
+      The getCount() method returns the size of the underlying HashMap, which is
+      the count of distinct keys. No ambiguity.
+    risk_class: operational
+    basis: >
+      The getCount() method (line 129-131) returns new Integer(cart.size()). The
+      HashMap size() method returns the number of key-value pairs, which equals the
+      number of distinct itemIDs in the cart.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 129
+        line_end: 131
+        excerpt: |
+          public Integer getCount() {
+              return new Integer(cart.size());
+          }
+
+  - record_key: CART-REQ-0008
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL clear all items from the shopping cart when the empty() method
+      is invoked.
+    confidence: high
+    confidence_basis: >
+      The empty() method calls HashMap.clear(), which is the only operation. No
+      ambiguity.
+    risk_class: operational
+    basis: >
+      The empty() method (line 146-148) invokes cart.clear(), which removes all
+      key-value pairs from the HashMap.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 146
+        line_end: 148
+        excerpt: |
+          public void empty () {
+              cart.clear();
+          }
+
+  - record_key: CART-REQ-0009
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL store the locale (language/region) for the shopping cart and
+      use it when fetching catalog item details. The locale SHALL default to
+      Locale.US (English, United States) upon cart initialization.
+    confidence: high
+    confidence_basis: >
+      The locale field is initialized to Locale.US in the constructor and is a
+      direct instance variable. The setLocale() method is the only way to change it.
+      The locale is then passed to catalog.getItem(key, locale) calls.
+    risk_class: operational
+    basis: >
+      The ShoppingCartLocalEJB class (line 64-66) declares a Locale field initialized
+      to Locale.US. The setLocale(Locale locale) method (line 76-78) allows updates.
+      The locale is used in getItems() at line 94: catalog.getItem(key, locale).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 64
+        line_end: 78
+        excerpt: |
+          private HashMap cart;
+          // default to the US English
+          private Locale locale = Locale.US;
+
+          public ShoppingCartLocalEJB() {
+              cart = new HashMap();
+          }
+
+          public void setLocale(Locale locale) {
+              this.locale = locale;
+          }
+
+  - record_key: CART-ENT-0001
+    kind: entity
+    capability_key: shopping-cart
+    requirement: >
+      A CartItem entity SHALL have the following attributes: itemId (unique identifier),
+      productId (product reference), category (product category), name (product name),
+      attribute (product variant or attribute), quantity (number of units), and
+      unitCost (price per unit). The entity SHALL provide a getTotalCost() method that
+      returns quantity * unitCost.
+    confidence: high
+    confidence_basis: >
+      The CartItem class is a value object with all fields defined and immutable
+      (initialized in constructor only). All fields are accessed via public getter
+      methods. The getTotalCost() calculation is explicit.
+    risk_class: operational
+    basis: >
+      The CartItem class (line 46-98 in CartItem.java) defines all attributes as
+      private instance variables, initialized via constructor. Public getter methods
+      are provided for each. The getTotalCost() method (line 95-97) explicitly
+      calculates quantity * unitCost.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/model/CartItem.java
+        line_start: 46
+        line_end: 98
+        excerpt: |
+          public class CartItem implements Serializable {
+              private String itemId;
+              private String productId;
+              private String category;
+              private String name;
+              private String attribute;
+              private int quantity;
+              private double unitCost;
+
+              public CartItem(String itemId, String productId, String category, String name,
+                              String attribute, int quantity, double unitCost) {
+                  this.category = category;
+                  this.itemId = itemId;
+                  this.productId = productId;
+                  this.name = name;
+                  this.attribute = attribute;
+                  this.quantity = quantity;
+                  this.unitCost = unitCost;
+              }
+
+              // ... getter methods ...
+
+              public double getTotalCost() {
+                  return quantity * unitCost;
+              }
+
+  - record_key: CART-WF-0001
+    kind: workflow
+    capability_key: shopping-cart
+    requirement: >
+      GIVEN a shopping cart in an initial empty state,
+      WHEN a user invokes addItem(itemID) with a catalog item ID,
+      THEN the item SHALL be added to the cart with quantity 1,
+      AND WHEN the user invokes getItems(),
+      THEN the returned collection SHALL include a CartItem with the product details
+      fetched from the catalog using the current locale.
+    confidence: medium
+    confidence_basis: >
+      The workflow is inferred from the code structure and method signatures. Both
+      addItem() and getItems() are public interface methods. However, there is no
+      explicit business process documentation, and the error handling in getItems()
+      (CatalogException is caught but not re-thrown) leaves the failure case ambiguous.
+    risk_class: operational
+    basis: >
+      The workflow is constructed from the public interface ShoppingCartLocal and
+      the implementation in ShoppingCartLocalEJB. The addItem(String itemID) adds
+      an item with quantity 1 (line 111-113). The getItems() method (line 83-109)
+      retrieves items from the cart and enriches them with catalog data.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocal.java
+        line_start: 61
+        line_end: 65
+        excerpt: |
+          public void addItem(String itemID);
+
+          public Collection getItems();
+
+  - record_key: CART-WF-0002
+    kind: workflow
+    capability_key: shopping-cart
+    requirement: >
+      GIVEN a shopping cart with one or more items,
+      WHEN a user invokes updateItemQuantity(itemID, newQty),
+      THEN IF newQty > 0, the item quantity SHALL be updated to newQty,
+      AND IF newQty <= 0, the item SHALL be removed from the cart.
+    confidence: high
+    confidence_basis: >
+      The workflow is explicitly implemented with an if-else structure in the code.
+      The boundary condition (newQty > 0) is the determining factor. No ambiguity.
+    risk_class: operational
+    basis: >
+      The updateItemQuantity(String itemID, int newQty) method (line 123-127) first
+      removes the item, then checks if newQty > 0 before re-adding it. This implements
+      the two-path workflow.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+        line_start: 123
+        line_end: 127
+        excerpt: |
+          public void updateItemQuantity (String itemID, int newQty) {
+              cart.remove(itemID);
+              // remove item if it is less than or equal to 0
+              if (newQty > 0) cart.put(itemID, new Integer(newQty));
+          }
+
+  - record_key: CART-BR-0001
+    kind: business-rule
+    capability_key: shopping-cart
+    requirement: >
+      The shopping cart SHALL be implemented as a stateful session EJB with container-managed
+      transactions. The transaction attribute for all public methods SHALL be "Required",
+      meaning each method invocation participates in a transaction.
+    confidence: high
+    confidence_basis: >
+      The ejb-jar.xml declarative configuration explicitly defines container-transaction
+      elements for each public method, all with trans-attribute=Required. This is the
+      canonical source of truth for transaction semantics.
+    risk_class: operational
+    basis: >
+      The ejb-jar.xml (lines 79-164) declares container-transaction elements for
+      addItem, deleteItem, updateItemQuantity, setLocale, getItems, getCount,
+      getSubTotal, and empty methods. All specify trans-attribute=Required.
+      The session-type is declared as Stateful (line 53).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/ejb-jar.xml
+        line_start: 47
+        line_end: 68
+        excerpt: |
+          <session>
+            <display-name>ShoppingCartSB</display-name>
+            <ejb-name>ShoppingCartEJB</ejb-name>
+            <local-home>com.sun.j2ee.blueprints.cart.ejb.ShoppingCartLocalHome</local-home>
+            <local>com.sun.j2ee.blueprints.cart.ejb.ShoppingCartLocal</local>
+            <ejb-class>com.sun.j2ee.blueprints.cart.ejb.ShoppingCartLocalEJB</ejb-class>
+            <session-type>Stateful</session-type>
+            <transaction-type>Container</transaction-type>
+            <security-identity>
+              <description></description>
+              <use-caller-identity></use-caller-identity>
+            </security-identity>
+          </session>
+
+  - record_key: CART-BR-0002
+    kind: business-rule
+    capability_key: shopping-cart
+    requirement: >
+      All shopping cart operations SHALL use the caller's identity for security context.
+      The use-caller-identity element in the ejb-jar.xml specifies that the EJB
+      SHALL propagate the authenticated user's identity to downstream component calls.
+    confidence: high
+    confidence_basis: >
+      The ejb-jar.xml contains an explicit security-identity element with
+      use-caller-identity. This is the canonical declarative configuration.
+    risk_class: operational
+    basis: >
+      The ejb-jar.xml (line 64-67) declares security-identity with use-caller-identity,
+      which means the shopping cart EJB runs under the authenticated user's security
+      context, not a separate run-as identity.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/ejb-jar.xml
+        line_start: 64
+        line_end: 67
+        excerpt: |
+          <security-identity>
+            <description></description>
+            <use-caller-identity></use-caller-identity>
+          </security-identity>
+
+  - record_key: CART-BR-0003
+    kind: business-rule
+    capability_key: shopping-cart
+    requirement: >
+      All public methods on the shopping cart SHALL be accessible without role-based
+      access control. The unchecked element in the method-permission specifies that
+      no specific security role is required to invoke any method on the
+      ShoppingCartEJB.
+    confidence: high
+    confidence_basis: >
+      The ejb-jar.xml contains an explicit unchecked element with a wildcard method
+      mapping for all ShoppingCartEJB methods. This is declarative policy.
+    risk_class: operational
+    basis: >
+      The ejb-jar.xml (line 72-78) declares method-permission with unchecked for all
+      methods (*) on ShoppingCartEJB, meaning no role check is enforced at the EJB tier.
+      Access control, if any, must be enforced at a higher tier (web filter, action).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/cart/src/ejb-jar.xml
+        line_start: 72
+        line_end: 78
+        excerpt: |
+          <method-permission>
+            <unchecked />
+            <method>
+              <ejb-name>ShoppingCartEJB</ejb-name>
+              <method-name>*</method-name>
+            </method>
+          </method-permission>
+
+findings:
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+    description: >
+      The getItems() method catches CatalogException but only prints it to System.out
+      and continues. The behavior when catalog items are not found is unclear: are
+      missing items silently omitted from the returned collection, or is a partial
+      collection acceptable? No explicit error recovery or logging framework is used.
+      The callers of getItems() do not have a way to detect if any items were skipped.
+
+  - kind: unparseable
+    path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+    description: >
+      The addItem(String itemID) method does not validate that the itemID refers to
+      a valid catalog item. Adding an invalid itemID will succeed, and the error will
+      only surface later when getItems() tries to fetch the item from the catalog.
+      This deferred validation pattern is not documented and could lead to a cart
+      containing orphaned item IDs.
+
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+    description: >
+      The getSubTotal() method (line 135) returns null if getItems() returns null.
+      However, getItems() returns an ArrayList (never null in the current code). The
+      null check appears to be defensive programming, but it is unclear what condition
+      would cause getItems() to return null. This suggests either incomplete error
+      handling or dead code.
+
+  - kind: unparseable
+    path: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java
+    description: >
+      The ShoppingCartModel class in ShoppingCartModel.java appears to be a separate
+      wrapper around a collection of CartItems, with its own getTotalCost() calculation
+      (line 79-86). It is unclear whether ShoppingCartModel is used by the cart EJB or
+      if it is a legacy artifact for a different tier (web or presentation). The relation
+      between ShoppingCartLocalEJB and ShoppingCartModel is not documented.
