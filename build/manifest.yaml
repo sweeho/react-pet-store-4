@@ -44,115 +44,9 @@ capabilities:
       reviewedBy: null
       reviewedAt: null
 
-  - slug: shopping-cart
-    title: Shopping Cart
-    order: 2
-    dependsOn: ["product-catalog"]
-    priority: 0
-    change:
-      dir: openspec/changes/sx-shopping-cart
-      specCapabilities:
-        - shopping-cart
-    canvas:
-      problem: "Customers need to collect and manage items across a browsing session without committing to immediate purchase, with flexible quantity management and cost visibility."
-      solution: "A session-based shopping cart service that enables customers to add, remove, and update item quantities with real-time subtotal calculation in the selected locale."
-      userStories:
-        - "As a customer, I want to add products to my cart and update quantities, so I can prepare a flexible purchase order."
-        - "As a customer, I want to remove items from my cart, so I can refine my selection before checkout."
-        - "As a customer, I want to see my cart subtotal in my preferred currency, so I can understand the cost of my intended purchase."
-      acceptanceCriteria:
-        - "Cart supports atomic add-item operations with default quantity of 1."
-        - "Cart supports removing items by itemId and updating quantities for multiple items atomically in a single transaction."
-        - "Cart calculates subtotal by summing unit cost × quantity for each line item and displays in user's preferred currency."
-        - "Cart can be emptied, removing all items and resetting state for new shopping session."
-        - "Cart items display product name, quantity input field, unit cost, and calculated line total."
-      outOfScope:
-        - "Pricing calculations beyond unit cost × quantity (discounts, surcharges, tax)"
-        - "Cart persistence across sessions; cart is session-scoped"
-        - "Inventory reservation or hold logic"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-    evidence:
-      irRefs: ["CART-REQ-0001", "CART-REQ-0002", "CART-REQ-0003", "CART-REQ-0004", "CART-REQ-0005"]
-      reviewedBy: null
-      reviewedAt: null
-
-  - slug: checkout-payment
-    title: Checkout & Payment
-    order: 3
-    dependsOn: ["shopping-cart", "customer-account"]
-    priority: 0
-    change:
-      dir: openspec/changes/sx-checkout-payment
-      specCapabilities:
-        - checkout-payment
-    canvas:
-      problem: "Order placement requires collection of billing address, shipping address, and payment card information with validation and persistence for order processing."
-      solution: "Order checkout workflow collecting and validating customer contact and payment details, creating a purchase order with line items and computing total price."
-      userStories:
-        - "As a customer, I want to enter billing and shipping address information during checkout, so the order can be shipped and invoiced correctly."
-        - "As a customer, I want to provide credit card information for payment, so the transaction can be processed."
-        - "As a system, I want to validate the cart contains items before allowing order placement, so orders are never created for empty carts."
-      acceptanceCriteria:
-        - "Order placement requires non-empty shopping cart; orders with empty carts raise ShoppingCartEmptyOrderException and are rejected."
-        - "Billing information collection includes first name and last name."
-        - "Shipping address collection includes street address, city, state, ZIP code, and country."
-        - "Credit card information collection includes card number, card type (Visa, MasterCard, etc.), and expiration date (MM/YYYY format)."
-        - "Order form posts to order.do endpoint and redirects to order confirmation screen on success."
-      outOfScope:
-        - "Actual credit card authorization or payment processing against payment networks"
-        - "Address validation against postal databases"
-        - "Fraud detection or risk assessment (handled by order-approval capability)"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-      screens:
-        - "Order entry screen: Collect billing and shipping address information, credit card details, and display order summary for confirmation before placement."
-    evidence:
-      irRefs: ["CKPT-REQ-0001", "CKPT-REQ-0002", "CKPT-REQ-0003", "CKPT-REQ-0004", "SCREEN-0003"]
-      reviewedBy: null
-      reviewedAt: null
-
-  - slug: order-management
-    title: Order Management
-    order: 4
-    dependsOn: ["checkout-payment"]
-    priority: 0
-    change:
-      dir: openspec/changes/sx-order-management
-      specCapabilities:
-        - order-management
-    canvas:
-      problem: "The order processing system requires persistent storage of purchase orders with unique identifiers, line items, customer contact/billing information, and order status tracking."
-      solution: "Order persistence and lifecycle management with unique order ID generation, line item tracking, and status-based fulfillment coordination."
-      userStories:
-        - "As the system, I want to create and persist purchase orders with unique IDs and complete customer/payment information, so orders can be tracked and fulfilled."
-        - "As a customer, I want to see my order with all line items, costs, and totals, so I can verify my purchase."
-        - "As a fulfillment system, I want to query orders by status and track line item fulfillment, so inventory and shipping operations can proceed."
-      acceptanceCriteria:
-        - "Orders have unique sequential IDs generated by UniqueIdGenerator with seed '1001'."
-        - "Orders store orderId, userId, orderDate (timestamp), billing info (ContactInfo), shipping info (ContactInfo), credit card, and line items with partial shipment support."
-        - "Order total price is calculated as sum of (unit cost × quantity) for each line item."
-        - "Orders persist customer's current locale from session state for localized display."
-        - "Shopping cart is emptied after successful order creation."
-      outOfScope:
-        - "Order approval workflow (handled by order-approval capability)"
-        - "Supplier purchase order generation (handled by inventory-fulfillment)"
-        - "Order notifications and messaging (handled by notification-messaging)"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-      screens:
-        - "Order management screen: Display individual order details including order ID, customer info, line items with quantities and costs, order total, and order status."
-    evidence:
-      irRefs: ["ORDM-REQ-0001", "ORDM-REQ-0002", "ORDM-REQ-0003", "ORDM-REQ-0004", "order-management-screen-0001"]
-      reviewedBy: null
-      reviewedAt: null
-
   - slug: customer-account
     title: Customer Account
-    order: 5
+    order: 2
     dependsOn: []
     priority: 0
     change:
@@ -188,6 +82,112 @@ capabilities:
         - "Customer contact information form: Edit customer name, email, and address details."
     evidence:
       irRefs: ["CUST-REQ-0001", "CUST-REQ-0002", "CUST-REQ-0003", "CUST-REQ-0004", "CUST-REQ-0005", "CUST-REQ-0006", "CUST-REQ-0007", "CUST-REQ-0008", "SIGNON-REQ-0001", "CUST-AUTH-0012", "CUST-AUTH-0013", "SCREEN-0004", "cust-screen-0001", "cust-screen-0002", "cust-screen-0003"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: shopping-cart
+    title: Shopping Cart
+    order: 3
+    dependsOn: ["product-catalog"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-shopping-cart
+      specCapabilities:
+        - shopping-cart
+    canvas:
+      problem: "Customers need to collect and manage items across a browsing session without committing to immediate purchase, with flexible quantity management and cost visibility."
+      solution: "A session-based shopping cart service that enables customers to add, remove, and update item quantities with real-time subtotal calculation in the selected locale."
+      userStories:
+        - "As a customer, I want to add products to my cart and update quantities, so I can prepare a flexible purchase order."
+        - "As a customer, I want to remove items from my cart, so I can refine my selection before checkout."
+        - "As a customer, I want to see my cart subtotal in my preferred currency, so I can understand the cost of my intended purchase."
+      acceptanceCriteria:
+        - "Cart supports atomic add-item operations with default quantity of 1."
+        - "Cart supports removing items by itemId and updating quantities for multiple items atomically in a single transaction."
+        - "Cart calculates subtotal by summing unit cost × quantity for each line item and displays in user's preferred currency."
+        - "Cart can be emptied, removing all items and resetting state for new shopping session."
+        - "Cart items display product name, quantity input field, unit cost, and calculated line total."
+      outOfScope:
+        - "Pricing calculations beyond unit cost × quantity (discounts, surcharges, tax)"
+        - "Cart persistence across sessions; cart is session-scoped"
+        - "Inventory reservation or hold logic"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+    evidence:
+      irRefs: ["CART-REQ-0001", "CART-REQ-0002", "CART-REQ-0003", "CART-REQ-0004", "CART-REQ-0005"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: checkout-payment
+    title: Checkout & Payment
+    order: 4
+    dependsOn: ["shopping-cart", "customer-account"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-checkout-payment
+      specCapabilities:
+        - checkout-payment
+    canvas:
+      problem: "Order placement requires collection of billing address, shipping address, and payment card information with validation and persistence for order processing."
+      solution: "Order checkout workflow collecting and validating customer contact and payment details, creating a purchase order with line items and computing total price."
+      userStories:
+        - "As a customer, I want to enter billing and shipping address information during checkout, so the order can be shipped and invoiced correctly."
+        - "As a customer, I want to provide credit card information for payment, so the transaction can be processed."
+        - "As a system, I want to validate the cart contains items before allowing order placement, so orders are never created for empty carts."
+      acceptanceCriteria:
+        - "Order placement requires non-empty shopping cart; orders with empty carts raise ShoppingCartEmptyOrderException and are rejected."
+        - "Billing information collection includes first name and last name."
+        - "Shipping address collection includes street address, city, state, ZIP code, and country."
+        - "Credit card information collection includes card number, card type (Visa, MasterCard, etc.), and expiration date (MM/YYYY format)."
+        - "Order form posts to order.do endpoint and redirects to order confirmation screen on success."
+      outOfScope:
+        - "Actual credit card authorization or payment processing against payment networks"
+        - "Address validation against postal databases"
+        - "Fraud detection or risk assessment (handled by order-approval capability)"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Order entry screen: Collect billing and shipping address information, credit card details, and display order summary for confirmation before placement."
+    evidence:
+      irRefs: ["CKPT-REQ-0001", "CKPT-REQ-0002", "CKPT-REQ-0003", "CKPT-REQ-0004", "SCREEN-0003"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: order-management
+    title: Order Management
+    order: 5
+    dependsOn: ["checkout-payment"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-order-management
+      specCapabilities:
+        - order-management
+    canvas:
+      problem: "The order processing system requires persistent storage of purchase orders with unique identifiers, line items, customer contact/billing information, and order status tracking."
+      solution: "Order persistence and lifecycle management with unique order ID generation, line item tracking, and status-based fulfillment coordination."
+      userStories:
+        - "As the system, I want to create and persist purchase orders with unique IDs and complete customer/payment information, so orders can be tracked and fulfilled."
+        - "As a customer, I want to see my order with all line items, costs, and totals, so I can verify my purchase."
+        - "As a fulfillment system, I want to query orders by status and track line item fulfillment, so inventory and shipping operations can proceed."
+      acceptanceCriteria:
+        - "Orders have unique sequential IDs generated by UniqueIdGenerator with seed '1001'."
+        - "Orders store orderId, userId, orderDate (timestamp), billing info (ContactInfo), shipping info (ContactInfo), credit card, and line items with partial shipment support."
+        - "Order total price is calculated as sum of (unit cost × quantity) for each line item."
+        - "Orders persist customer's current locale from session state for localized display."
+        - "Shopping cart is emptied after successful order creation."
+      outOfScope:
+        - "Order approval workflow (handled by order-approval capability)"
+        - "Supplier purchase order generation (handled by inventory-fulfillment)"
+        - "Order notifications and messaging (handled by notification-messaging)"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Order management screen: Display individual order details including order ID, customer info, line items with quantities and costs, order total, and order status."
+    evidence:
+      irRefs: ["ORDM-REQ-0001", "ORDM-REQ-0002", "ORDM-REQ-0003", "ORDM-REQ-0004", "order-management-screen-0001"]
       reviewedBy: null
       reviewedAt: null
 

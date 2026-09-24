@@ -204,7 +204,7 @@ Session timeout for supplier module SHALL be 54 minutes. Users whose session exp
 
 ### Requirement: XML validation configuration
 
-The system MUST validate purchase order XML documents and invoice XML documents. XML validation MUST be enabled/disabled via configuration parameters. Supplier order validation, Supplier order XSD validation, and Invoice XSD validation MUST each be configurable independently via environment entries.
+The system SHALL validate purchase order XML documents and invoice XML documents. XML validation SHALL be enabled/disabled via configuration parameters. Supplier order validation, Supplier order XSD validation, and Invoice XSD validation SHALL each be configurable independently via environment entries.
 
 #### Scenario: XML validation is enabled for supplier orders
 
