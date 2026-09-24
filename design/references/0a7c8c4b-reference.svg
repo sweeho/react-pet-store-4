@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="3107" viewBox="0 0 1440 3107" role="img" aria-label="Meridian Design System token reference" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTozZGM0YWJjMy1jNWZhLTQ5YjEtYjE2Mi01OGIxNDNkYzAzNDUAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaP+ooURBxafh/H3W/QYMbGwAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpmZTM3NjNiNi1mMDJjLTRhNWMtYTVlMS0wNmFiMTgzZjBhMDZscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoYueaAgr8if7ukbGDpEKVeAAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgggg+NJjWDlLWbsidDyWKsyJyFzlFIB6rf26ho7Jxe8gOkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaFiN1XpqZoJytr+6Ip7aoW8AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIDTNaDNCt2mwY/oCnj97v4pougbVNqG1z9rzOmj1OqSYZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GQEAZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjNkYzRhYmMzLWM1ZmEtNDliMS1iMTYyLTU4YjE0M2RjMDM0NS9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjNkMDMxZTIxLTg2ZTEtNGIwMC04ZjY4LWVjZjAyZjNhYWI0NXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCCCD40mNYOUtZuyJ0PJYqzInIXOUUgHqt/bqGjsnF7yA6JjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggAFIe3OEA+K7nc226oe/tGC9BJ4Gqj1zcRFw8QMJmy1+iY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggVblEPNGqFi6os6+H9Zkod5gY0HBaCbQfOwTEU3UZoAF0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQJIBx/5ozTZntyWEjX86hXjCvX1+XWGkMAbEw1ssnktswslFrpg8095l4x8ln813JqtfeFkJaTAgZ+FMLxJjgBk=</c2pa:manifest></metadata>
+<title>Meridian Design System — token reference v1.0.0</title>
+<desc>Colour palette, semantic roles, type scale, 4pt spacing grid, radius, elevation, controls and motion, generated from tokens.json.</desc>
+<rect width="1440" height="3107" fill="#F2F2F7"/>
+<text x="64" y="96" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="48" font-weight="700" fill="#000000" text-anchor="start" letter-spacing="-0.5">Meridian</text>
+<text x="64" y="120" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="20" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Web design system — token reference v1.0.0</text>
+<text x="64" y="140" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Rendered from tokens.json. The HTML, SVG and PNG reference sheets are built from one source.</text>
+<text x="64" y="196" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Colour — semantic roles</text>
+<text x="64" y="220" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Build against the role, not the hue. Swapping the brand is one edit in one file.</text>
+<rect x="64" y="240" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<rect x="64" y="264" width="249.6" height="72" rx="12" fill="#007AFF"/>
+<text x="64" y="356" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Accent</text>
+<text x="64" y="372" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#007AFF</text>
+<rect x="329.6" y="264" width="249.6" height="72" rx="12" fill="#34C759"/>
+<text x="329.6" y="356" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Success</text>
+<text x="329.6" y="372" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#34C759</text>
+<rect x="595.2" y="264" width="249.6" height="72" rx="12" fill="#FF9500"/>
+<text x="595.2" y="356" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Warning</text>
+<text x="595.2" y="372" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#FF9500</text>
+<rect x="860.8" y="264" width="249.6" height="72" rx="12" fill="#FF3B30"/>
+<text x="860.8" y="356" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Danger</text>
+<text x="860.8" y="372" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#FF3B30</text>
+<rect x="1126.4" y="264" width="249.6" height="72" rx="12" fill="#30B0C7"/>
+<text x="1126.4" y="356" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Info</text>
+<text x="1126.4" y="372" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#30B0C7</text>
+<text x="64" y="436" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Colour — palette</text>
+<text x="64" y="460" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">The raw ramp, light appearance. Dark values ship alongside and swap automatically.</text>
+<rect x="64" y="480" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<rect x="64" y="504" width="208.667" height="52" rx="8" fill="#007AFF"/>
+<text x="64" y="572" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">blue</text>
+<text x="64" y="586" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#007AFF</text>
+<rect x="284.667" y="504" width="208.667" height="52" rx="8" fill="#A2845E"/>
+<text x="284.667" y="572" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">brown</text>
+<text x="284.667" y="586" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#A2845E</text>
+<rect x="505.333" y="504" width="208.667" height="52" rx="8" fill="#32ADE6"/>
+<text x="505.333" y="572" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">cyan</text>
+<text x="505.333" y="586" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#32ADE6</text>
+<rect x="726" y="504" width="208.667" height="52" rx="8" fill="#34C759"/>
+<text x="726" y="572" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">green</text>
+<text x="726" y="586" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#34C759</text>
+<rect x="946.667" y="504" width="208.667" height="52" rx="8" fill="#5856D6"/>
+<text x="946.667" y="572" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">indigo</text>
+<text x="946.667" y="586" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#5856D6</text>
+<rect x="1167.33" y="504" width="208.667" height="52" rx="8" fill="#00C7BE"/>
+<text x="1167.33" y="572" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">mint</text>
+<text x="1167.33" y="586" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#00C7BE</text>
+<rect x="64" y="588" width="208.667" height="52" rx="8" fill="#FF9500"/>
+<text x="64" y="656" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">orange</text>
+<text x="64" y="670" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#FF9500</text>
+<rect x="284.667" y="588" width="208.667" height="52" rx="8" fill="#FF2D55"/>
+<text x="284.667" y="656" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">pink</text>
+<text x="284.667" y="670" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#FF2D55</text>
+<rect x="505.333" y="588" width="208.667" height="52" rx="8" fill="#AF52DE"/>
+<text x="505.333" y="656" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">purple</text>
+<text x="505.333" y="670" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#AF52DE</text>
+<rect x="726" y="588" width="208.667" height="52" rx="8" fill="#FF3B30"/>
+<text x="726" y="656" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">red</text>
+<text x="726" y="670" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#FF3B30</text>
+<rect x="946.667" y="588" width="208.667" height="52" rx="8" fill="#30B0C7"/>
+<text x="946.667" y="656" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">teal</text>
+<text x="946.667" y="670" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#30B0C7</text>
+<rect x="1167.33" y="588" width="208.667" height="52" rx="8" fill="#FFCC00"/>
+<text x="1167.33" y="656" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">yellow</text>
+<text x="1167.33" y="670" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#FFCC00</text>
+<rect x="64" y="680" width="208.667" height="52" rx="8" fill="#8E8E93"/>
+<text x="64" y="748" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">gray</text>
+<text x="64" y="762" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#8E8E93</text>
+<rect x="284.667" y="680" width="208.667" height="52" rx="8" fill="#AEAEB2"/>
+<text x="284.667" y="748" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">gray2</text>
+<text x="284.667" y="762" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#AEAEB2</text>
+<rect x="505.333" y="680" width="208.667" height="52" rx="8" fill="#C7C7CC"/>
+<text x="505.333" y="748" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">gray3</text>
+<text x="505.333" y="762" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#C7C7CC</text>
+<rect x="726" y="680" width="208.667" height="52" rx="8" fill="#D1D1D6"/>
+<text x="726" y="748" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">gray4</text>
+<text x="726" y="762" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#D1D1D6</text>
+<rect x="946.667" y="680" width="208.667" height="52" rx="8" fill="#E5E5EA"/>
+<text x="946.667" y="748" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">gray5</text>
+<text x="946.667" y="762" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#E5E5EA</text>
+<rect x="1167.33" y="680" width="208.667" height="52" rx="8" fill="#F2F2F7" stroke="#C6C6C8" stroke-width="0.5"/>
+<text x="1167.33" y="748" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">gray6</text>
+<text x="1167.33" y="762" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">#F2F2F7</text>
+<text x="64" y="820" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Typography</text>
+<text x="64" y="844" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">A style is a bundle: size, line height, tracking and weight travel together. Never set a size alone.</text>
+<rect x="64" y="864" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="914.52" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="34" font-weight="700" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="904" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">large-title</text>
+<text x="624" y="922" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">One per page, at the top. Never inside a card.</text>
+<text x="1376" y="904" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">34/41  700</text>
+<rect x="64" y="933" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="962.84" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="957" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">title-1</text>
+<text x="624" y="975" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Section opener.</text>
+<text x="1376" y="957" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">28/34  700</text>
+<rect x="64" y="979" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1004.16" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="22" font-weight="700" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1003" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">title-2</text>
+<text x="624" y="1021" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Subsection.</text>
+<text x="1376" y="1003" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">22/28  700</text>
+<rect x="64" y="1023" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1046.6" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="20" font-weight="600" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1047" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">title-3</text>
+<text x="624" y="1065" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Card and panel heading.</text>
+<text x="1376" y="1047" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">20/25  600</text>
+<rect x="64" y="1067" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1088.26" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="600" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1091" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">headline</text>
+<text x="624" y="1109" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">The important line in a row or card.</text>
+<text x="1376" y="1091" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">17/22  600</text>
+<rect x="64" y="1111" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1132.26" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="400" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1135" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">body</text>
+<text x="624" y="1153" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Default reading size. Do not go smaller for prose.</text>
+<text x="1376" y="1135" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">17/22  400</text>
+<rect x="64" y="1155" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1175.48" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1179" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">callout</text>
+<text x="624" y="1197" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Body copy in a dense region.</text>
+<text x="1376" y="1179" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">16/21  400</text>
+<rect x="64" y="1199" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1218.7" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1223" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">subheadline</text>
+<text x="624" y="1241" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Secondary line under a headline.</text>
+<text x="1376" y="1223" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">15/20  400</text>
+<rect x="64" y="1243" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1261.14" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1267" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">footnote</text>
+<text x="624" y="1285" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Timestamps, helper text under a field.</text>
+<text x="1376" y="1267" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">13/18  400</text>
+<rect x="64" y="1287" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1304.36" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1311" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">caption-1</text>
+<text x="624" y="1329" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Table column headers, chart axis labels.</text>
+<text x="1376" y="1311" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">12/16  400</text>
+<rect x="64" y="1331" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1347.58" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="11" font-weight="400" fill="#000000" text-anchor="start">Ship it on Friday</text>
+<text x="624" y="1355" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="600" fill="#000000" text-anchor="start">caption-2</text>
+<text x="624" y="1373" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Smallest permitted text. Legal and metadata only.</text>
+<text x="1376" y="1355" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">11/13  400</text>
+<rect x="64" y="1375" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1439" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Space — 4pt grid</text>
+<text x="64" y="1463" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Reach for the named step, never a raw pixel value, so the rhythm survives a scale change.</text>
+<rect x="64" y="1483" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="1518" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-0-5</text>
+<rect x="184" y="1509" width="2" height="12" rx="2" fill="#007AFF"/>
+<text x="198" y="1518" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">2px</text>
+<text x="64" y="1540" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-1</text>
+<rect x="184" y="1531" width="4" height="12" rx="2" fill="#007AFF"/>
+<text x="200" y="1540" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">4px</text>
+<text x="64" y="1562" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-1-5</text>
+<rect x="184" y="1553" width="6" height="12" rx="2" fill="#007AFF"/>
+<text x="202" y="1562" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">6px</text>
+<text x="64" y="1584" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-2</text>
+<rect x="184" y="1575" width="8" height="12" rx="2" fill="#007AFF"/>
+<text x="204" y="1584" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">8px</text>
+<text x="64" y="1606" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-3</text>
+<rect x="184" y="1597" width="12" height="12" rx="2" fill="#007AFF"/>
+<text x="208" y="1606" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">12px</text>
+<text x="64" y="1628" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-4</text>
+<rect x="184" y="1619" width="16" height="12" rx="2" fill="#007AFF"/>
+<text x="212" y="1628" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">16px</text>
+<text x="64" y="1650" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-5</text>
+<rect x="184" y="1641" width="20" height="12" rx="2" fill="#007AFF"/>
+<text x="216" y="1650" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">20px</text>
+<text x="64" y="1672" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-6</text>
+<rect x="184" y="1663" width="24" height="12" rx="2" fill="#007AFF"/>
+<text x="220" y="1672" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">24px</text>
+<text x="64" y="1694" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-8</text>
+<rect x="184" y="1685" width="32" height="12" rx="2" fill="#007AFF"/>
+<text x="228" y="1694" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">32px</text>
+<text x="64" y="1716" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-10</text>
+<rect x="184" y="1707" width="40" height="12" rx="2" fill="#007AFF"/>
+<text x="236" y="1716" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">40px</text>
+<text x="64" y="1738" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-12</text>
+<rect x="184" y="1729" width="48" height="12" rx="2" fill="#007AFF"/>
+<text x="244" y="1738" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">48px</text>
+<text x="64" y="1760" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-16</text>
+<rect x="184" y="1751" width="64" height="12" rx="2" fill="#007AFF"/>
+<text x="260" y="1760" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">64px</text>
+<text x="64" y="1782" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-20</text>
+<rect x="184" y="1773" width="80" height="12" rx="2" fill="#007AFF"/>
+<text x="276" y="1782" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">80px</text>
+<text x="64" y="1804" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">spacing-24</text>
+<rect x="184" y="1795" width="96" height="12" rx="2" fill="#007AFF"/>
+<text x="292" y="1804" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">96px</text>
+<text x="64" y="1875" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Shape and elevation</text>
+<text x="64" y="1899" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Radius encodes size: a card is always rounder than the control inside it. Elevation names a behaviour, not a look.</text>
+<rect x="64" y="1919" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<rect x="64" y="1943" width="150" height="68" rx="4" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="139" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">xs</text>
+<text x="139" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">4px</text>
+<rect x="230" y="1943" width="150" height="68" rx="6" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="305" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">sm</text>
+<text x="305" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">6px</text>
+<rect x="396" y="1943" width="150" height="68" rx="8" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="471" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">md</text>
+<text x="471" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">8px</text>
+<rect x="562" y="1943" width="150" height="68" rx="10" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="637" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">lg</text>
+<text x="637" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">10px</text>
+<rect x="728" y="1943" width="150" height="68" rx="12" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="803" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">xl</text>
+<text x="803" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">12px</text>
+<rect x="894" y="1943" width="150" height="68" rx="16" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="969" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">2xl</text>
+<text x="969" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">16px</text>
+<rect x="1060" y="1943" width="150" height="68" rx="20" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="1135" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">3xl</text>
+<text x="1135" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">20px</text>
+<rect x="1226" y="1943" width="150" height="68" rx="28" fill="#EFEFF0" stroke="#C6C6C8" stroke-width="1"/>
+<text x="1301" y="2027" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#000000" text-anchor="middle">4xl</text>
+<text x="1301" y="2041" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">28px</text>
+<rect x="64" y="2067" width="243.2" height="76" rx="12" fill="#FFFFFF"/>
+<text x="185.6" y="2163" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#000000" text-anchor="middle">flat</text>
+<text x="185.6" y="2179" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">shadow-0</text>
+<rect x="328.2" y="2065" width="249.2" height="82" rx="15" fill="#000000" fill-opacity="0.03333333333333333"/>
+<rect x="329.2" y="2066" width="247.2" height="80" rx="14" fill="#000000" fill-opacity="0.03333333333333333"/>
+<rect x="330.2" y="2067" width="245.2" height="78" rx="13" fill="#000000" fill-opacity="0.03333333333333333"/>
+<rect x="331.2" y="2067" width="243.2" height="76" rx="12" fill="#FFFFFF"/>
+<text x="452.8" y="2163" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#000000" text-anchor="middle">resting</text>
+<text x="452.8" y="2179" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">shadow-1</text>
+<rect x="593.4" y="2064" width="253.2" height="86" rx="17" fill="#000000" fill-opacity="0.026000000000000002"/>
+<rect x="594.4" y="2065" width="251.2" height="84" rx="16" fill="#000000" fill-opacity="0.026000000000000002"/>
+<rect x="595.4" y="2066" width="249.2" height="82" rx="15" fill="#000000" fill-opacity="0.026000000000000002"/>
+<rect x="596.4" y="2067" width="247.2" height="80" rx="14" fill="#000000" fill-opacity="0.026000000000000002"/>
+<rect x="597.4" y="2068" width="245.2" height="78" rx="13" fill="#000000" fill-opacity="0.026000000000000002"/>
+<rect x="598.4" y="2067" width="243.2" height="76" rx="12" fill="#FFFFFF"/>
+<text x="720" y="2163" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#000000" text-anchor="middle">raised</text>
+<text x="720" y="2179" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">shadow-2</text>
+<rect x="853.6" y="2060" width="267.2" height="100" rx="24" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="854.6" y="2061" width="265.2" height="98" rx="23" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="855.6" y="2062" width="263.2" height="96" rx="22" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="856.6" y="2063" width="261.2" height="94" rx="21" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="857.6" y="2064" width="259.2" height="92" rx="20" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="858.6" y="2065" width="257.2" height="90" rx="19" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="859.6" y="2066" width="255.2" height="88" rx="18" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="860.6" y="2067" width="253.2" height="86" rx="17" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="861.6" y="2068" width="251.2" height="84" rx="16" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="862.6" y="2069" width="249.2" height="82" rx="15" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="863.6" y="2070" width="247.2" height="80" rx="14" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="864.6" y="2071" width="245.2" height="78" rx="13" fill="#000000" fill-opacity="0.012499999999999999"/>
+<rect x="865.6" y="2067" width="243.2" height="76" rx="12" fill="#FFFFFF"/>
+<text x="987.2" y="2163" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#000000" text-anchor="middle">popover</text>
+<text x="987.2" y="2179" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">shadow-3</text>
+<rect x="1108.8" y="2055" width="291.2" height="124" rx="36" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1109.8" y="2056" width="289.2" height="122" rx="35" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1110.8" y="2057" width="287.2" height="120" rx="34" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1111.8" y="2058" width="285.2" height="118" rx="33" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1112.8" y="2059" width="283.2" height="116" rx="32" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1113.8" y="2060" width="281.2" height="114" rx="31" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1114.8" y="2061" width="279.2" height="112" rx="30" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1115.8" y="2062" width="277.2" height="110" rx="29" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1116.8" y="2063" width="275.2" height="108" rx="28" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1117.8" y="2064" width="273.2" height="106" rx="27" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1118.8" y="2065" width="271.2" height="104" rx="26" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1119.8" y="2066" width="269.2" height="102" rx="25" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1120.8" y="2067" width="267.2" height="100" rx="24" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1121.8" y="2068" width="265.2" height="98" rx="23" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1122.8" y="2069" width="263.2" height="96" rx="22" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1123.8" y="2070" width="261.2" height="94" rx="21" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1124.8" y="2071" width="259.2" height="92" rx="20" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1125.8" y="2072" width="257.2" height="90" rx="19" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1126.8" y="2073" width="255.2" height="88" rx="18" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1127.8" y="2074" width="253.2" height="86" rx="17" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1128.8" y="2075" width="251.2" height="84" rx="16" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1129.8" y="2076" width="249.2" height="82" rx="15" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1130.8" y="2077" width="247.2" height="80" rx="14" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1131.8" y="2078" width="245.2" height="78" rx="13" fill="#000000" fill-opacity="0.008333333333333333"/>
+<rect x="1132.8" y="2067" width="243.2" height="76" rx="12" fill="#FFFFFF"/>
+<text x="1254.4" y="2163" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#000000" text-anchor="middle">modal</text>
+<text x="1254.4" y="2179" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="middle">shadow-4</text>
+<text x="64" y="2251" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Controls</text>
+<text x="64" y="2275" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">One action per button, named for what happens when it is pressed. 44px is the touch floor.</text>
+<rect x="64" y="2295" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<rect x="64" y="2319" width="150.4" height="44" rx="12" fill="#007AFF"/>
+<text x="139.2" y="2347" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="600" fill="#FFFFFF" text-anchor="middle">Save changes</text>
+<rect x="226.4" y="2319" width="122.8" height="44" rx="12" fill="#DBECFF"/>
+<text x="287.8" y="2347" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="600" fill="#007AFF" text-anchor="middle">Duplicate</text>
+<rect x="361.2" y="2319" width="95.2" height="44" rx="12" fill="#E5E5EA" stroke="#C6C6C8" stroke-width="0.5"/>
+<text x="408.8" y="2347" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="600" fill="#000000" text-anchor="middle">Cancel</text>
+<rect x="468.4" y="2319" width="168.8" height="44" rx="12" fill="#FF3B30"/>
+<text x="552.8" y="2347" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="600" fill="#FFFFFF" text-anchor="middle">Delete project</text>
+<rect x="61" y="2385" width="1318" height="140" rx="19" fill="#000000" fill-opacity="0.03333333333333333"/>
+<rect x="62" y="2386" width="1316" height="138" rx="18" fill="#000000" fill-opacity="0.03333333333333333"/>
+<rect x="63" y="2387" width="1314" height="136" rx="17" fill="#000000" fill-opacity="0.03333333333333333"/>
+<rect x="64" y="2387" width="1312" height="134" rx="16" fill="#FFFFFF"/>
+<text x="80" y="2406" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Deploy on merge</text>
+<text x="80" y="2421" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Ships to production when a pull request lands on main.</text>
+<rect x="1309" y="2394" width="51" height="31" rx="9999" fill="#34C759"/>
+<rect x="1331" y="2396" width="27" height="27" rx="9999" fill="#FFFFFF"/>
+<rect x="80" y="2431" width="1296" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="80" y="2450" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Require review</text>
+<text x="80" y="2465" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">One approval before a merge is allowed.</text>
+<rect x="1309" y="2438" width="51" height="31" rx="9999" fill="#EFEFF0"/>
+<rect x="1311" y="2440" width="27" height="27" rx="9999" fill="#FFFFFF" stroke="#C6C6C8" stroke-width="0.5"/>
+<rect x="80" y="2475" width="1296" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="80" y="2494" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">Build status</text>
+<text x="80" y="2509" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Last run finished 4 minutes ago.</text>
+<rect x="1286" y="2486" width="74" height="22" rx="9999" fill="#34C759"/>
+<text x="1323" y="2501" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="12" font-weight="600" fill="#FFFFFF" text-anchor="middle">Passing</text>
+<rect x="64" y="2545" width="1312" height="76" rx="12" fill="#FFF2E0" stroke="#FF9500" stroke-width="0.5"/>
+<circle cx="93" cy="2571" r="9" fill="none" stroke="#FF9500" stroke-width="1.75"/>
+<path d="M93 2566 v5.5" stroke="#FF9500" stroke-width="1.75" stroke-linecap="round"/>
+<circle cx="93" cy="2576" r="1.1" fill="#FF9500"/>
+<text x="114" y="2573" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="17" font-weight="600" fill="#000000" text-anchor="start">The staging certificate expires on 30 September</text>
+<text x="114" y="2595" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Renew it from the domains page. Builds keep running until then.</text>
+<text x="64" y="2693" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="start">Motion</text>
+<text x="64" y="2717" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Motion answers an action. Nothing animates on load, and every duration collapses to 1ms under reduced motion.</text>
+<rect x="64" y="2737" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="2775" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">instant</text>
+<text x="204" y="2775" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">State flips with no travel: a checkbox, a switch.</text>
+<text x="1376" y="2775" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">100ms</text>
+<rect x="64" y="2783" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="2805" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">fast</text>
+<text x="204" y="2805" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Hover and press feedback, tooltips.</text>
+<text x="1376" y="2805" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">200ms</text>
+<rect x="64" y="2813" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="2835" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">base</text>
+<text x="204" y="2835" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Panels, popovers, anything that opens.</text>
+<text x="1376" y="2835" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">300ms</text>
+<rect x="64" y="2843" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="2865" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">slow</text>
+<text x="204" y="2865" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Full-screen transitions.</text>
+<text x="1376" y="2865" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">400ms</text>
+<rect x="64" y="2873" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="2895" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="600" fill="#000000" text-anchor="start">deliberate</text>
+<text x="204" y="2895" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Onboarding only. Needs a reason.</text>
+<text x="1376" y="2895" font-family="ui-monospace, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="end">500ms</text>
+<rect x="64" y="2903" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<rect x="64" y="2943" width="1312" height="1" rx="0" fill="#C6C6C8" fill-opacity="0.5"/>
+<text x="64" y="2963" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Meridian Design System v1.0.0 — generated from tokens.json by build_reference_svg.py.</text>
+<text x="64" y="2983" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Conventions follow Apple's published Human Interface Guidelines: the platform type scale, the 4pt grid,</text>
+<text x="64" y="3003" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">semantic label and fill roles, and the 44px touch target. No Apple fonts, icons or other assets ship with it.</text>
+<text x="64" y="3023" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, Carlito, 'DejaVu Sans', sans-serif" font-size="13" font-weight="400" fill="#3C3C43" fill-opacity="0.6" text-anchor="start">Replace the Meridian name and the accent role with your own. Nothing else needs to change.</text>
+</svg>
