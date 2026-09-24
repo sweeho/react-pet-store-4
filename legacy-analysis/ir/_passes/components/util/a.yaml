@@ -1,0 +1,185 @@
+records:
+  - record_key: ADMIN-UTIL-STATIC-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide a static utility class with static methods for debug operations,
+      allowing diagnostic output without requiring instance creation or dependency injection.
+    confidence: high
+    confidence_basis: >
+      The Debug class is declared as public final with only static methods and a static field.
+      No constructors are visible, indicating it is designed as a pure utility class providing
+      stateless helper functions. All methods (print, println, print with Exception/Throwable)
+      are public static, confirming the class serves as a static utility facade.
+    risk_class: operational
+    basis: >
+      The class declaration (line 44) shows public final class with only static field debuggingOn
+      and static methods. No instance constructors or instance fields exist. The class structure
+      follows the static utility pattern common in Java for helper methods.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 44
+        line_end: 80
+        excerpt: |
+          public final class Debug {
+
+              public static final boolean debuggingOn = false;
+
+              public static void print(String msg) {
+                  ...
+              }
+
+              public static void println(String msg) {
+                  ...
+              }
+
+  - record_key: ADMIN-UTIL-PRINT-API-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide two overloaded String print methods: print() for output without
+      line termination, and println() for output with line termination and a prefix indicator.
+    confidence: high
+    confidence_basis: >
+      Two distinct method signatures are present and documented by their implementation.
+      print(String msg) outputs directly without additional formatting. println(String msg)
+      adds the ">>" prefix and terminates with a newline. Both check the debuggingOn flag.
+      The method names follow Java convention and their contract is clear from implementation.
+    risk_class: operational
+    basis: >
+      print() method (line 48-52) takes a String and outputs to System.err.print() if debuggingOn is true.
+      println() method (line 54-58) takes a String, prepends ">>" to it, and outputs to System.err.println()
+      if debuggingOn is true. The ">>" prefix serves as a visual marker for debug output.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 48
+        line_end: 58
+        excerpt: |
+          public static void print(String msg) {
+              if (debuggingOn) {
+                  System.err.print(msg);
+              }
+          }
+
+          public static void println(String msg) {
+              if (debuggingOn) {
+                  System.err.println(">>" + msg);
+              }
+          }
+
+  - record_key: ADMIN-UTIL-EXCEPTION-API-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide overloaded methods to print exception and throwable diagnostic
+      information in four forms: print(Exception), print(Exception, String), print(Throwable),
+      and print(Throwable, String). When a message is provided, it SHALL be printed along with
+      the throwable information; when omitted, only throwable diagnostics SHALL be printed.
+    confidence: high
+    confidence_basis: >
+      Four distinct method signatures handle exception printing. Exception variants delegate to
+      Throwable variants (line 61 shows explicit delegation via cast). The Throwable variants
+      handle both with-message and without-message cases by passing null (line 65). The implementation
+      is deterministic and follows the same gatekeeping pattern as string print methods.
+    risk_class: operational
+    basis: >
+      print(Exception e, String msg) (line 60-62) casts and delegates to print(Throwable, String msg).
+      print(Exception e) (line 64-66) calls print(e, null), delegating the null case.
+      print(Throwable t, String msg) (line 68-75) implements the core logic: checks debuggingOn,
+      prints t.getMessage(), optionally prints msg if not null, and calls t.printStackTrace().
+      print(Throwable t) (line 77-79) delegates by calling print(t, null).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 60
+        line_end: 79
+        excerpt: |
+          public static void print(Exception e, String msg) {
+              print((Throwable)e, msg);
+          }
+
+          public static void print(Exception e) {
+              print(e, null);
+          }
+
+          public static void print(Throwable t, String msg) {
+              if (debuggingOn) {
+                  System.out.println("Received throwable with Message: "+t.getMessage());
+                  if (msg != null)
+                      System.out.print(msg);
+                  t.printStackTrace();
+              }
+          }
+
+          public static void print(Throwable t) {
+              print(t, null);
+          }
+
+  - record_key: ADMIN-UTIL-DEBUG-GATE-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide a compile-time debug gate mechanism via a static final boolean
+      flag (debuggingOn) that, when false, suppresses all debug output. The flag is initialized
+      to false and cannot be changed at runtime without code modification.
+    confidence: high
+    confidence_basis: >
+      The debuggingOn field is declared as public static final boolean initialized to false (line 46).
+      Every debug output method checks this flag before executing (lines 49, 55, 69 show the if
+      statements). The static final modifier guarantees the value is compile-time constant and
+      immutable at runtime. This is a standard Java pattern for compile-time feature gating.
+    risk_class: operational
+    basis: >
+      debuggingOn field (line 46) is declared public static final boolean = false. All print methods
+      guard their output with "if (debuggingOn)" before calling System.err or System.out methods.
+      The static final modifiers mean this value cannot be changed after class initialization and
+      Java compilers can optimize away dead code when debuggingOn is false.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 46
+        line_end: 46
+        excerpt: |
+          public static final boolean debuggingOn = false;
+
+  - record_key: ADMIN-UTIL-STDERR-OUTPUT-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL output regular debug messages (print/println operations) to standard error
+      stream (System.err) rather than standard output, establishing error stream as the diagnostic
+      output channel.
+    confidence: high
+    confidence_basis: >
+      Both print(String) and println(String) methods explicitly call System.err.print() and
+      System.err.println() respectively (lines 50, 56). No alternative output destination is
+      used for string-based debug output. This is a consistent, implemented pattern.
+    risk_class: operational
+    basis: >
+      print() at line 50 calls System.err.print(msg). println() at line 56 calls
+      System.err.println(">>" + msg). Both use stderr exclusively for string output.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 48
+        line_end: 58
+        excerpt: |
+          public static void print(String msg) {
+              if (debuggingOn) {
+                  System.err.print(msg);
+              }
+          }
+
+          public static void println(String msg) {
+              if (debuggingOn) {
+                  System.err.println(">>" + msg);
+              }
+          }
+
+findings:
+  - kind: conflict
+    path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+    description: >
+      Exception/throwable printing uses System.out (line 70) for the exception message while
+      regular debug printing uses System.err (lines 50, 56). A human should decide whether this
+      asymmetry is intentional (exceptions warrant stdout, diagnostics warrant stderr) or a defect
+      (all diagnostic output should use the same stream for consistency). The printStackTrace()
+      method called at line 73 uses System.err by default, so the output streams are mixed even
+      within exception handling.
