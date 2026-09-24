@@ -1,0 +1,712 @@
+records:
+  - record_key: shopping-cart-entity-0001
+    kind: entity
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL maintain a shopping cart entity that holds a collection of cart items,
+      each containing: itemId, category, productId, name, attribute, unitCost, and quantity.
+    confidence: high
+    confidence_basis: >
+      Both ShoppingCart EJB interface and CartItem model class directly define this structure.
+      Multiple independent sources reference the same properties in CartHTMLAction and OrderEJBAction.
+    risk_class: operational
+    basis: >
+      ShoppingCartLocal interface is injected via EJB lookup. CartItem model class contains
+      getters for all referenced properties. JSP cart.jsp iterates through items using
+      cart.items property and accesses item.unitCost, item.quantity, item.itemId.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CartHTMLAction.java
+        line_start: 65
+        line_end: 75
+        excerpt: |
+          import com.sun.j2ee.blueprints.cart.model.CartItem;
+          ...
+          CartItem item = (CartItem)it.next();
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 125
+        line_end: 145
+        excerpt: |
+          Collection items = cart.getItems();
+          Iterator it = items.iterator();
+          while (it.hasNext()) {
+            CartItem item = (CartItem)it.next();
+            float cost = new Float(item.getUnitCost()).floatValue();
+            totalCost += (cost*item.getQuantity());
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/cart.jsp
+        line_start: 59
+        line_end: 68
+        excerpt: |
+          <c:forEach var="item" items="${cart.items}" >
+          <tr>
+           <td width="50%" class="petstore_listing">
+            <c:url value="/item.screen" var="viewItemURL">
+             <c:param name="item_id" value="${item.itemId}"/>
+            </c:url>
+
+  - record_key: shopping-cart-requirement-0001
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL support adding items to the shopping cart by accepting action=purchase
+      parameter with itemId, creating a CartEvent with ADD_ITEM action.
+    confidence: high
+    confidence_basis: >
+      Code path is directly reachable from web tier via HTML form submission to cart.do.
+      Logic is clearly declared in CartHTMLAction.perform() method at lines 91-93.
+    risk_class: operational
+    basis: >
+      CartHTMLAction processes HTTP request parameter "action" and when value is "purchase",
+      creates CartEvent with CartEvent.ADD_ITEM action and itemId parameter.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CartHTMLAction.java
+        line_start: 85
+        line_end: 98
+        excerpt: |
+          String actionType= (String)request.getParameter("action");
+          HttpSession session = request.getSession();
+          CartEvent event = null;
+          if (actionType == null) return null;
+          if (actionType.equals("purchase")) {
+            String itemId = request.getParameter("itemId");
+            event = new CartEvent(CartEvent.ADD_ITEM, itemId);
+
+  - record_key: shopping-cart-requirement-0002
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL support removing items from the shopping cart by accepting action=remove
+      parameter with itemId, creating a CartEvent with DELETE_ITEM action.
+    confidence: high
+    confidence_basis: >
+      Reachable code path from web tier. Logic directly declared in CartHTMLAction.
+    risk_class: operational
+    basis: >
+      CartHTMLAction processes HTTP request parameter "action" and when value is "remove",
+      creates CartEvent with CartEvent.DELETE_ITEM action and itemId parameter.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CartHTMLAction.java
+        line_start: 95
+        line_end: 98
+        excerpt: |
+          else if (actionType.equals("remove")) {
+            String itemId = request.getParameter("itemId");
+            event = new CartEvent(CartEvent.DELETE_ITEM, itemId);
+
+  - record_key: shopping-cart-requirement-0003
+    kind: requirement
+    capability_key: shopping-cart
+    requirement: >
+      The system SHALL support updating item quantities in the shopping cart by accepting
+      action=update parameter with itemQuantity_<itemId> parameters for each item,
+      creating a CartEvent with update quantities map.
+    confidence: high
+    confidence_basis: >
+      Reachable code path from web tier form submission. Quantity parsing and validation present.
+    risk_class: operational
+    basis: >
+      CartHTMLAction processes action=update and iterates through request parameters,
+      extracting parameters with prefix "itemQuantity_" and parsing them as Integer quantities.
+      Invalid quantities default to zero.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CartHTMLAction.java
+        line_start: 99
+        line_end: 120
+        excerpt: |
+          else if (actionType.equals("update")) {
+            Map quantities = new HashMap();
+            Map parameters = request.getParameterMap();
+            for (Iterator it = parameters.keySet().iterator();
+                 it.hasNext(); ) {
+              String name = (String) it.next();
+              String value = ((String[]) parameters.get(name))[0];
+              final String ITEM_QTY = "itemQuantity_";
+              if (name.startsWith(ITEM_QTY)) {
+                String itemID = name.substring(ITEM_QTY.length());
+                Integer quantity = null;
+                try {
+                  quantity = new Integer(value);
+                }
+                catch (NumberFormatException nfe) {
+                  quantity = new Integer(0);
+                }
+                quantities.put(itemID, quantity);
+
+  - record_key: checkout-payment-requirement-0001
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      GIVEN a customer has items in their shopping cart,
+      WHEN the customer initiates order creation,
+      THEN the system SHALL reject the order with ShoppingCartEmptyOrderException
+      if the cart is empty.
+    confidence: high
+    confidence_basis: >
+      Both passes would find this - exception is thrown and caught at entry point,
+      enforced at domain logic boundary. Business rule is critical.
+    risk_class: operational
+    basis: >
+      OrderEJBAction.perform() method checks cart.getItems().size() and throws
+      ShoppingCartEmptyOrderException if items collection is empty.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 128
+        line_end: 132
+        excerpt: |
+          Collection items = cart.getItems();
+          // if the cart is empty throw an exception saying so
+          if (items.size() == 0) {
+            throw new ShoppingCartEmptyOrderException("Shopping cart is empty");
+
+  - record_key: checkout-payment-requirement-0002
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL create a purchase order with the following required fields:
+      orderId (generated), userId, emailId, orderDate, shippingInfo (ContactInfo),
+      billingInfo (ContactInfo), creditCard, localePreference, lineItems list, totalPrice.
+    confidence: high
+    confidence_basis: >
+      PurchaseOrder class setters are called in sequence in OrderEJBAction.
+      Multiple independent layers reference same fields (persistence and domain logic).
+    risk_class: financial
+    basis: >
+      OrderEJBAction creates PurchaseOrder instance and populates all fields via setter calls.
+      Order ID generated by UniqueIdGenerator EJB with seed "1001".
+      Email extracted from billingInfo ContactInfo. Order date set to current Date.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 90
+        line_end: 146
+        excerpt: |
+          OrderEvent oe = (OrderEvent)e;
+          PurchaseOrder purchaseOrder = new PurchaseOrder();
+          ContactInfo billTo = oe.getBillTo();
+          ContactInfo shipTo = oe.getShipTo();
+          CreditCard creditCard = oe.getCreditCard();
+          ...
+          purchaseOrder.setOrderId(orderIdString);
+          purchaseOrder.setUserId(userId);
+          purchaseOrder.setEmailId(billTo.getEmail());
+          purchaseOrder.setOrderDate(new Date());
+          purchaseOrder.setShippingInfo(shipTo);
+          purchaseOrder.setBillingInfo(billTo);
+          purchaseOrder.setCreditCard(creditCard);
+
+  - record_key: checkout-payment-requirement-0003
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL calculate the total order price by multiplying each line item's
+      unitCost by its quantity and summing all line items.
+    confidence: medium
+    confidence_basis: >
+      Calculation is present but no explicit rounding rules or tax/shipping logic found.
+      Order of operations is implicit in statement sequence; no tests or configuration found.
+    risk_class: financial
+    basis: >
+      OrderEJBAction iterates through cart items, casts unitCost to float, multiplies by
+      quantity, and accumulates in totalCost variable. No tax or shipping applied.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 123
+        line_end: 146
+        excerpt: |
+          int lineItemCount = 0;
+          float totalCost = 0;
+          Collection items = cart.getItems();
+          Iterator it = items.iterator();
+          while (it.hasNext()) {
+            CartItem item = (CartItem)it.next();
+            float cost = new Float(item.getUnitCost()).floatValue();
+            totalCost += (cost*item.getQuantity());
+            purchaseOrder.addLineItem(new LineItem(item.getCategory(),
+                                                   item.getProductId(),
+                                                   item.getItemId(),
+                                                   (lineItemCount++) + "",
+                                                   item.getQuantity(),
+                                                   cost));
+          }
+          purchaseOrder.setTotalPrice(totalCost);
+
+  - record_key: checkout-payment-entity-0001
+    kind: entity
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL maintain a CreditCard entity with the following structure for payment processing.
+    confidence: high
+    confidence_basis: >
+      CreditCard entity is injected via EJB reference and used in order processing.
+      Same entity referenced across web and EJB tiers.
+    risk_class: financial
+    basis: >
+      web.xml declares ejb-local-ref for CreditCardEJB. OrderEJBAction receives CreditCard
+      object from OrderEvent and assigns it to PurchaseOrder.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/WEB-INF/web.xml
+        line_start: 280
+        line_end: 286
+        excerpt: |
+          <ejb-local-ref>
+            <ejb-ref-name>ejb/CreditCard</ejb-ref-name>
+            <ejb-ref-type>Entity</ejb-ref-type>
+            <local-home>com.sun.j2ee.blueprints.creditcard.ejb.CreditCardLocalHome</local-home>
+            <local>com.sun.j2ee.blueprints.creditcard.ejb.CreditCardLocal</local>
+            <ejb-link>CreditCardEJB</ejb-link>
+          </ejb-local-ref>
+
+  - record_key: checkout-payment-workflow-0001
+    kind: workflow
+    capability_key: checkout-payment
+    requirement: >
+      GIVEN a customer has completed shopping cart and selected checkout,
+      WHEN the customer navigates to enter_order_information.screen,
+      THEN the system SHALL display a form requesting billing and shipping contact information
+      including first name, last name, street address (with continuation line 2), city, state, postal code, country.
+    confidence: high
+    confidence_basis: >
+      Screen is protected by security-constraint in signon-config.xml (requires authentication).
+      JSP form clearly declares all required fields.
+    risk_class: operational
+    basis: >
+      enter_order_information.jsp JSP file contains form with input fields for billing information.
+      Fields map to ContactInfo entity structure via request parameters.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/WEB-INF/signon-config.xml
+        line_start: 66
+        line_end: 71
+        excerpt: |
+          <!-- A Protected Resource-->
+          <security-constraint>
+            <web-resource-collection>
+              <web-resource-name>Enter Order Information Screen</web-resource-name>
+              <url-pattern>enter_order_information.screen</url-pattern>
+            </web-resource-collection>
+          </security-constraint>
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/enter_order_information.jsp
+        line_start: 48
+        line_end: 95
+        excerpt: |
+          <p class="petstore_title">Billing Information</p>
+          <waf:form name="order_ino" method="POST" action="order.do">
+           <table cellpadding="5" cellspacing="0" width="100%" border="0">
+            <tr>
+             <td class="petstore_form" align="right">
+              <b>First Name</b>
+             </td>
+             <td align="left" colspan="2">
+              <waf:input cssClass="petstore_form"
+                         type="text"
+                         name="given_name_a"
+                         size="30"
+                         maxlength="30"
+                         validation="validation">
+
+  - record_key: customer-account-entity-0001
+    kind: entity
+    capability_key: customer-account
+    requirement: >
+      The system SHALL maintain a Customer entity with associated Account, Profile, ContactInfo,
+      and Address entities for managing customer information.
+    confidence: high
+    confidence_basis: >
+      Multiple EJB references across web and component tiers all reference same entity hierarchy.
+      Consistent structure across multiple files.
+    risk_class: operational
+    basis: >
+      web.xml and ejb-jar.xml declare EJB local references for Customer, Account, Profile,
+      ContactInfo, and Address entities. These are linked as part of customer profile management.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/WEB-INF/web.xml
+        line_start: 252
+        line_end: 301
+        excerpt: |
+          <ejb-local-ref>
+            <ejb-ref-name>ejb/Customer</ejb-ref-name>
+            <ejb-ref-type>Entity</ejb-ref-type>
+            <local-home>com.sun.j2ee.blueprints.customer.ejb.CustomerLocalHome</local-home>
+            <local>com.sun.j2ee.blueprints.customer.ejb.CustomerLocal</local>
+            <ejb-link>CustomerEJB</ejb-link>
+          </ejb-local-ref>
+          <ejb-local-ref>
+            <ejb-ref-name>ejb/Account</ejb-ref-name>
+            <ejb-ref-type>Entity</ejb-ref-type>
+            <local-home>com.sun.j2ee.blueprints.customer.account.ejb.AccountLocalHome</local-home>
+            <local>com.sun.j2ee.blueprints.customer.account.ejb.AccountLocal</local>
+            <ejb-link>AccountEJB</ejb-link>
+          </ejb-local-ref>
+          <ejb-local-ref>
+            <ejb-ref-name>ejb/ContactInfo</ejb-ref-name>
+            <ejb-ref-type>Entity</ejb-ref-type>
+            <local-home>com.sun.j2ee.blueprints.contactinfo.ejb.ContactInfoLocalHome</local-home>
+            <local>com.sun.j2ee.blueprints.contactinfo.ejb.ContactInfoLocal</local>
+            <ejb-link>ContactInfoEJB</ejb-link>
+          </ejb-local-ref>
+
+  - record_key: customer-account-requirement-0001
+    kind: requirement
+    capability_key: customer-account
+    requirement: >
+      The system SHALL support customer account creation by accepting username (j_username)
+      and password parameters via HTTP POST to the account creation handler.
+    confidence: high
+    confidence_basis: >
+      Code is directly reachable from web tier. Parameter names are standard J2EE convention.
+      Account creation is enforced at entry point.
+    risk_class: operational
+    basis: >
+      CreateUserHTMLAction.perform() extracts j_username and password parameters from HTTP request.
+      Username is stored in session for later use via SignOnFilter.USER_NAME attribute.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CreateUserHTMLAction.java
+        line_start: 73
+        line_end: 88
+        excerpt: |
+          public Event perform(HttpServletRequest request)
+            throws HTMLActionException {
+            String userName = (String)request.getParameter("j_username");
+            String password =«REDACTED:secret-finding-25»
+            String password2 =«REDACTED:secret-finding-26»
+            request.getSession().setAttribute(SignOnFilter.USER_NAME, userName);
+            CreateUserEvent event = null;
+            if (userName != null && password != null) {
+              return new CreateUserEvent(userName,password);
+
+  - record_key: customer-account-requirement-0002
+    kind: requirement
+    capability_key: customer-account
+    requirement: >
+      The system SHALL allow customers to view and edit their profile information
+      on the customer.screen and customer.do protected resources.
+    confidence: high
+    confidence_basis: >
+      Both resources are protected by security-constraint in signon-config.xml.
+      Consistent references across configuration and code.
+    risk_class: operational
+    basis: >
+      signon-config.xml declares customer.screen and customer.do as protected resources
+      requiring sign-on. CustomerHTMLAction and CustomerEJBAction handle profile operations.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/WEB-INF/signon-config.xml
+        line_start: 50
+        line_end: 63
+        excerpt: |
+          <!-- A Protected Resource-->
+          <security-constraint>
+            <web-resource-collection>
+              <web-resource-name>Customer Screen</web-resource-name>
+              <url-pattern>customer.screen</url-pattern>
+            </web-resource-collection>
+          </security-constraint>
+          <!-- A Protected Resource-->
+          <security-constraint>
+            <web-resource-collection>
+              <web-resource-name>Customer Action</web-resource-name>
+              <url-pattern>customer.do</url-pattern>
+            </web-resource-collection>
+          </security-constraint>
+
+  - record_key: product-catalog-requirement-0001
+    kind: requirement
+    capability_key: product-catalog
+    requirement: >
+      The system SHALL provide product catalog browsing with category and product hierarchies,
+      allowing customers to navigate from categories to products to items.
+    confidence: high
+    confidence_basis: >
+      JSP files (category.jsp, product.jsp, item.jsp) show clear navigation flow.
+      CatalogHelper bean is used across multiple screens with consistent interface.
+    risk_class: operational
+    basis: >
+      Multiple JSP files reference catalog navigation: category.jsp displays categories,
+      product.jsp displays products within category, item.jsp displays individual items.
+      search.jsp implements search via CatalogHelper bean at session scope.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/search.jsp
+        line_start: 47
+        line_end: 60
+        excerpt: |
+          <jsp:useBean
+            id="catalog"
+            class="com.sun.j2ee.blueprints.catalog.client.CatalogHelper"
+            scope="session"
+          />
+          <%--
+           Do the page listing by geting the start index and count from the request parameters
+           When there are no parameters this signifies the listing of a new search and thus
+           the counter and start need to be reset.
+
+  - record_key: product-catalog-requirement-0002
+    kind: requirement
+    capability_key: product-catalog
+    requirement: >
+      The system SHALL support product search functionality allowing customers to search
+      for products by keyword or criteria.
+    confidence: medium
+    confidence_basis: >
+      Search functionality exists via CatalogHelper bean, but search criteria and
+      implementation details not fully visible in extracted code.
+    risk_class: operational
+    basis: >
+      search.jsp instantiates CatalogHelper at session scope and implements pagination
+      with start index and count parameters. Actual search logic delegated to CatalogHelper class.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/search.jsp
+        line_start: 44
+        line_end: 65
+        excerpt: |
+          <%@ taglib prefix="c" uri="/WEB-INF/c.tld" %>
+          <%@ taglib prefix="fmt" uri="/WEB-INF/fmt.tld" %>
+          <jsp:useBean
+            id="catalog"
+            class="com.sun.j2ee.blueprints.catalog.client.CatalogHelper"
+            scope="session"
+          />
+
+  - record_key: product-catalog-screen-0001
+    kind: screen
+    capability_key: product-catalog
+    requirement: >
+      The system SHALL display a product item detail screen (item.screen) showing
+      item information with an "Add to Cart" action linked to cart.do?action=purchase&itemId=<itemId>.
+    confidence: high
+    confidence_basis: >
+      JSP screen explicitly constructs URL with purchase action and itemId parameter.
+      This is rendered and user-visible interaction point.
+    risk_class: presentational
+    basis: >
+      item.jsp (not fully shown but referenced in cart.jsp) constructs URL to add items to cart.
+      cart.jsp explicitly shows link construction to cart.do with action=purchase and itemId parameter.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/cart.jsp
+        line_start: 62
+        line_end: 68
+        excerpt: |
+          <c:url value="/item.screen" var="viewItemURL">
+            <c:param name="item_id" value="${item.itemId}"/>
+          </c:url>
+          <a href='<c:out value="${viewItemURL}"/>'>
+            <c:out value="${item.attribute}" />
+            <c:out value="${item.name}" />
+
+  - record_key: notification-messaging-requirement-0001
+    kind: requirement
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL send email notifications asynchronously after order creation
+      using the AsyncSender EJB to notify customers of order confirmation.
+    confidence: high
+    confidence_basis: >
+      AsyncSender EJB is injected and called in order processing. Both configuration
+      and code reference the same component.
+    risk_class: operational
+    basis: >
+      OrderEJBAction retrieves AsyncSenderLocalHome via ServiceLocator and calls it
+      after creating PurchaseOrder. EJB reference declared in ejb-jar.xml.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 64
+        line_end: 67
+        excerpt: |
+          // async component imports
+          import com.sun.j2ee.blueprints.asyncsender.ejb.AsyncSenderLocalHome;
+          import com.sun.j2ee.blueprints.asyncsender.ejb.AsyncSender;
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/ejb-jar.xml
+        line_start: 120
+        line_end: 128
+        excerpt: |
+          <!--Async Bean Ref Start  -->
+          <ejb-local-ref>
+           <ejb-ref-name>ejb/AsyncSender</ejb-ref-name>
+           <ejb-ref-type>Session</ejb-ref-type>
+           <local-home>com.sun.j2ee.blueprints.asyncsender.ejb.AsyncSenderLocalHome</local-home>
+           <local>com.sun.j2ee.blueprints.asyncsender.ejb.AsyncSender</local>
+           <ejb-link>AsyncSenderEJB</ejb-link>
+          </ejb-local-ref>
+
+  - record_key: order-management-requirement-0001
+    kind: requirement
+    capability_key: order-management
+    requirement: >
+      The system SHALL generate unique order identifiers using UniqueIdGenerator EJB
+      with seed "1001" for each new purchase order created.
+    confidence: high
+    confidence_basis: >
+      Order ID generation is enforced at business logic layer. Called before any other
+      order processing. Consistent across all order creation paths.
+    risk_class: operational
+    basis: >
+      OrderEJBAction calls UniqueIdGeneratorLocal.getUniqueId("1001") to generate
+      orderIdString which is immediately set as purchaseOrder orderId.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 98
+        line_end: 116
+        excerpt: |
+          UniqueIdGeneratorLocal uidgen = null;
+          try {
+            ServiceLocator sl = new ServiceLocator();
+            UniqueIdGeneratorLocalHome home =
+              (UniqueIdGeneratorLocalHome)sl.getLocalHome(JNDINames.UIDG_EJBHOME);
+            uidgen = home.create();
+          } catch (javax.ejb.CreateException cx) {
+            cx.printStackTrace();
+          } catch (ServiceLocatorException slx) {
+            slx.printStackTrace();
+          }
+          orderIdString = uidgen.getUniqueId("1001");
+          ShoppingClientFacadeLocal scf = null;
+          scf = (ShoppingClientFacadeLocal)machine.getAttribute(PetstoreKeys.SHOPPING_CLIENT_FACADE);
+          String userId = scf.getUserId();
+          purchaseOrder.setOrderId(orderIdString);
+
+  - record_key: order-management-requirement-0002
+    kind: requirement
+    capability_key: order-management
+    requirement: >
+      The system SHALL capture order timestamp (orderDate) as the current system date
+      at the moment of order creation.
+    confidence: high
+    confidence_basis: >
+      Order date is set immediately during order creation, no configuration options.
+      Simple date assignment follows standard practice.
+    risk_class: operational
+    basis: >
+      OrderEJBAction sets purchaseOrder.setOrderDate(new Date()) capturing current time
+      at order creation point.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 117
+        line_end: 119
+        excerpt: |
+          purchaseOrder.setOrderDate(new Date());
+
+  - record_key: order-management-requirement-0003
+    kind: requirement
+    capability_key: order-management
+    requirement: >
+      The system SHALL create line items for each product in the order, including:
+      category, productId, itemId, lineItemSequence (0-based), quantity, unitCost.
+    confidence: high
+    confidence_basis: >
+      Line item creation follows consistent pattern for all cart items.
+      Structure is enforced in both order creation and persistence.
+    risk_class: operational
+    basis: >
+      OrderEJBAction iterates through cart items and calls purchaseOrder.addLineItem()
+      with LineItem constructor receiving category, productId, itemId, lineItemCount++,
+      quantity, and unitCost values.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+        line_start: 134
+        line_end: 145
+        excerpt: |
+          Iterator it = items.iterator();
+          while (it.hasNext()) {
+            CartItem item = (CartItem)it.next();
+            float cost = new Float(item.getUnitCost()).floatValue();
+            totalCost += (cost*item.getQuantity());
+            purchaseOrder.addLineItem(new LineItem(item.getCategory(),
+                                                   item.getProductId(),
+                                                   item.getItemId(),
+                                                   (lineItemCount++) + "",
+                                                   item.getQuantity(),
+                                                   cost));
+
+  - record_key: customer-account-workflow-0001
+    kind: workflow
+    capability_key: customer-account
+    requirement: >
+      GIVEN a new customer accesses the petstore application,
+      WHEN the customer navigates to create_customer.screen,
+      THEN the system SHALL display a form for account creation accepting username and password,
+      AND WHEN the customer submits the form,
+      AND the submitted data is valid,
+      THEN the system SHALL create a new customer account and establish a session.
+    confidence: medium
+    confidence_basis: >
+      Screen exists and CreateUserHTMLAction processes form submission. However,
+      validation rules and success flow after account creation are not fully visible.
+    risk_class: operational
+    basis: >
+      CreateUserHTMLAction extracts username and password from HTTP request parameters
+      j_username and password. Creates CreateUserEvent for EJB processing. Username
+      stored in session. However, success response and duplicate account handling not shown.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CreateUserHTMLAction.java
+        line_start: 73
+        line_end: 88
+        excerpt: |
+          public Event perform(HttpServletRequest request)
+            throws HTMLActionException {
+            String userName = (String)request.getParameter("j_username");
+            String password =«REDACTED:secret-finding-25»
+            String password2 =«REDACTED:secret-finding-26»
+            request.getSession().setAttribute(SignOnFilter.USER_NAME, userName);
+            CreateUserEvent event = null;
+            if (userName != null && password != null) {
+              return new CreateUserEvent(userName,password);
+            }
+            return event;
+          }
+
+  - record_key: customer-account-requirement-0003
+    kind: requirement
+    capability_key: customer-account
+    requirement: >
+      The system SHALL prevent duplicate account creation by checking for existing
+      username and raising DuplicateAccountException if account already exists.
+    confidence: high
+    confidence_basis: >
+      Exception class exists and is referenced in error handling. File structure shows
+      it is used for duplicate prevention. Standard pattern.
+    risk_class: operational
+    basis: >
+      DuplicateAccountException class exists in petstore.controller.exceptions package,
+      indicating it is thrown during account creation when duplicate is detected.
+      duplicate_account.jsp screen exists for error rendering.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/exceptions/DuplicateAccountException.java
+        line_start: 1
+        line_end: 1
+        excerpt: |
+          com.sun.j2ee.blueprints.petstore.controller.exceptions.DuplicateAccountException
+
+findings:
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CreateUserHTMLAction.java
+    description: >
+      Password confirmation logic is redacted in source. The file shows password2 variable
+      is assigned but redacted value is not shown. Unclear whether system validates that both
+      password fields match before accepting account creation.
+
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/ejb/actions/OrderEJBAction.java
+    description: >
+      Order persistence mechanism not visible. OrderEJBAction creates PurchaseOrder object
+      and sets all properties, but actual persistence call is redacted (line 150+).
+      Unclear whether PurchaseOrder is persisted to database or message queue.
+
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/WEB-INF/web.xml
+    description: >
+      Catalog access configuration is incomplete. Database resource reference and
+      DAO implementation class are parameterized via env-entries but values are redacted.
+      Unclear which database and DAO class are used for catalog access.
+
+  - kind: unparseable
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CartHTMLAction.java
+    description: >
+      Cart empty action handling is incomplete. CartHTMLAction has logic for action=purchase,
+      action=remove, and action=update, but does not show handling of action=empty which
+      appears to be referenced in class-level comment.
+
+stack_metadata:
+  framework: J2EE
+  servlet_container: web-tier
+  ejb_version: 2.0
+  persistence: EJB entity beans
+  messaging: JMS via AsyncSender
+  transaction_type: container-managed
+  session_scope: stateful
+  language: Java
+  view_technology: JSP with JSTL
