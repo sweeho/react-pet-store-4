@@ -1,0 +1,472 @@
+records:
+  - record_key: notification-messaging-req-0001
+    kind: requirement
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL process email messages received on a JMS queue and send them to
+      SMTP mail recipients asynchronously without blocking the originating transaction.
+    confidence: high
+    confidence_basis: >
+      Both the EJB deployment descriptor (ejb-jar.xml) and MailerMDB source code implement
+      a container-managed message-driven bean that listens on a javax.jms.Queue and invokes
+      onMessage() for each text message. Container-managed transactions (Required attribute)
+      ensure atomicity of message receipt and mail send.
+    risk_class: operational
+    basis: >
+      The MailerMDB class implements MessageDrivenBean and MessageListener interfaces. The
+      ejb-jar.xml declares a message-driven-destination of type javax.jms.Queue with container
+      transaction management set to Required. The onMessage method (line 74-91) receives TextMessage,
+      parses XML, and delegates to MailHelper.createAndSendMail().
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/MailerMDB.java
+        line_start: 56
+        line_end: 91
+        excerpt: |
+          public class MailerMDB implements MessageDrivenBean, MessageListener {
+            public void onMessage(Message recvMsg) {
+              TextMessage textMessage = null;
+              String xmlMailMessage = null;
+              Mail recMail = null;
+              try {
+                textMessage = (TextMessage)recvMsg;
+                xmlMailMessage = textMessage.getText();
+                recMail = Mail.fromXML(xmlMailMessage);
+                sendMail(recMail.getAddress(), recMail.getSubject(), recMail.getContent(),  Locale.getDefault());
+              } catch (MailerAppException me) {
+                //ignore since user probably forgot to set up mail server
+              } catch (XMLDocumentException xde) {
+                throw new EJBException("MailerMDB.onMessage" + xde);
+              } catch(JMSException je) {
+                throw new EJBException("MailerMDB.onMessage" + je);
+              }
+            }
+          }
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/ejb-jar.xml
+        line_start: 48
+        line_end: 81
+        excerpt: |
+          <message-driven>
+            <description>opc node to process PurchaseOrders from the Java Pet Store</description>
+            <display-name>MailerMDB</display-name>
+            <ejb-name>MailerMDB</ejb-name>
+            <ejb-class>com.sun.j2ee.blueprints.mailer.ejb.MailerMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <message-driven-destination>
+              <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+            <resource-ref>
+              <res-ref-name>mail/MailSession</res-ref-name>
+              <res-type>javax.mail.Session</res-type>
+              <res-auth>Container</res-auth>
+              <res-sharing-scope>Shareable</res-sharing-scope>
+            </resource-ref>
+          </message-driven>
+          <container-transaction>
+            <method>
+              <ejb-name>MailerMDB</ejb-name>
+              <method-name>onMessage</method-name>
+              <method-params>
+                <method-param>javax.jms.Message</method-param>
+              </method-params>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+          </container-transaction>
+    stack_metadata:
+      ejb.bean: MailerMDB
+      jms.queue: javax.jms.Queue (destination-type in ejb-jar.xml)
+      ejb.transaction: Required
+
+  - record_key: notification-messaging-req-0002
+    kind: requirement
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL parse email message payloads from XML format containing Address,
+      Subject, and Content elements and validate them against a DTD schema.
+    confidence: high
+    confidence_basis: >
+      The Mail class provides static fromXML methods with explicit DTD validation (VALIDATING=true).
+      The Mail.fromXML(String) method parses XML using XMLDocumentUtils with DTD_PUBLIC_ID and
+      DTD_SYSTEM_ID constants. The DTD file Mail.dtd defines the exact structure required.
+      Both MailerMDB and the transition delegates pass XML strings to Mail.fromXML.
+    risk_class: operational
+    basis: >
+      Mail class (line 117-137) implements fromXML with three overloads: Source-based, String-based,
+      and with URL entity catalog. The VALIDATING constant is set to true (line 54). DTD constants
+      reference the Mail.dtd schema. The Mail.fromXML(String buffer) method at line 121-123 calls
+      fromXML(new StreamSource(...), entityCatalogURL, VALIDATING).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/Mail.java
+        line_start: 51
+        line_end: 137
+        excerpt: |
+          public class Mail {
+            public static final String DTD_PUBLIC_ID = "-//Sun Microsystems, Inc. - J2EE Blueprints Group//DTD OPC Mail 1.0//EN";
+            public static final String DTD_SYSTEM_ID = "/com/sun/j2ee/blueprints/mailer/rsrc/schemas/Mail.dtd";
+            public static final boolean VALIDATING = true;
+            private String address = null;
+            private String subject  = null;
+            private String content = null;
+
+            public static Mail fromXML(Source source) throws XMLDocumentException {
+              return fromXML(source, null, VALIDATING);
+            }
+            public static Mail fromXML(String buffer) throws XMLDocumentException {
+              return fromXML(buffer, null, VALIDATING);
+            }
+            public static Mail fromXML(String buffer, URL entityCatalogURL, boolean validating) throws XMLDocumentException {
+              try {
+                return fromXML(new StreamSource(new StringReader(buffer)), entityCatalogURL, validating);
+              } catch (XMLDocumentException exception) {
+                System.err.println(exception.getRootCause().getMessage());
+                throw new XMLDocumentException(exception);
+              }
+            }
+          }
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/rsrc/schemas/Mail.dtd
+        line_start: 38
+        line_end: 42
+        excerpt: |
+          <!ELEMENT Mail (Address, Subject, Content)>
+          <!ELEMENT Address (#PCDATA)>
+          <!ELEMENT Subject (#PCDATA)>
+          <!ELEMENT Content (#PCDATA)>
+    stack_metadata:
+      db.object: Mail entity (class)
+      framework: DOM-based XML parsing via XMLDocumentUtils
+
+  - record_key: notification-messaging-req-0003
+    kind: requirement
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL send email messages via SMTP using a container-managed JavaMail
+      Session resource and support HTML content type (text/html) with MIME multipart encoding.
+    confidence: high
+    confidence_basis: >
+      MailHelper.createAndSendMail() uses InitialContext JNDI lookup to obtain a javax.mail.Session
+      from the configured resource reference. The method creates MimeMessage, sets recipients using
+      InternetAddress parsing, and uses DataHandler with ByteArrayDataSource to set content type as
+      text/html (line 79). Transport.send() is used to submit the message to SMTP. The JNDI resource
+      is declared in ejb-jar.xml with res-type javax.mail.Session.
+    risk_class: operational
+    basis: >
+      MailHelper.createAndSendMail (line 70-90) performs: (1) JNDI lookup of Session from
+      java:comp/env/mail/MailSession (via JNDINames.MAIL_SESSION), (2) creates MimeMessage,
+      (3) sets recipients via InternetAddress.parse(), (4) sets content type to text/html,
+      (5) uses ByteArrayDataSource and DataHandler for payload, (6) calls Transport.send().
+      The ejb-jar.xml resource-ref (line 58-63) declares mail/MailSession as javax.mail.Session
+      with Container authentication.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/MailHelper.java
+        line_start: 62
+        line_end: 91
+        excerpt: |
+          public class MailHelper {
+            public void createAndSendMail(String emailAddress, String subject, String mailContent, Locale locale) throws MailerAppException {
+              try {
+                InitialContext ic = new InitialContext();
+                Session session = (Session) ic.lookup(JNDINames.MAIL_SESSION);
+                Message msg = new MimeMessage(session);
+                msg.setFrom();
+                msg.setRecipients(Message.RecipientType.TO,
+                         InternetAddress.parse(emailAddress, false));
+                msg.setSubject(subject);
+                String contentType = "text/html";
+                StringBuffer sb = new StringBuffer(mailContent);
+                msg.setDataHandler(new DataHandler(
+                                    new ByteArrayDataSource(sb.toString(), contentType)));
+                msg.setHeader("X-Mailer", "JavaMailer");
+                msg.setSentDate(new Date());
+                Transport.send(msg);
+              } catch (Exception e) {
+                System.err.print("createAndSendMail exception : " + e);
+                throw new MailerAppException("Failure while sending mail");
+              }
+            }
+          }
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/util/JNDINames.java
+        line_start: 45
+        line_end: 52
+        excerpt: |
+          public class JNDINames {
+            private JNDINames() { }
+            public static final String MAIL_SESSION =
+                  "java:comp/env/mail/MailSession";
+          }
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/ejb-jar.xml
+        line_start: 58
+        line_end: 63
+        excerpt: |
+          <resource-ref>
+            <res-ref-name>mail/MailSession</res-ref-name>
+            <res-type>javax.mail.Session</res-type>
+            <res-auth>Container</res-auth>
+            <res-sharing-scope>Shareable</res-sharing-scope>
+          </resource-ref>
+    stack_metadata:
+      ejb.transaction: Required (MDB onMessage)
+      framework: JavaMail (javax.mail)
+
+  - record_key: notification-messaging-req-0004
+    kind: requirement
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL gracefully handle mail server unavailability by catching
+      MailerAppException and suppressing the error, allowing the MDB to continue processing
+      without rolling back the message transaction.
+    confidence: medium
+    confidence_basis: >
+      The MailerMDB.onMessage method (line 83-85) explicitly catches MailerAppException with
+      a comment "ignore since user probably forgot to set up mail server" and does not rethrow.
+      This is captured in both the source code comment and the catch block. However, no explicit
+      configuration or documentation explains the recovery mechanism, only the comment in code.
+    risk_class: operational
+    basis: >
+      MailerMDB.onMessage (line 83-85) catches MailerAppException with explicit comment and
+      empty handler block. MailHelper.createAndSendMail (line 86-89) wraps all exceptions as
+      MailerAppException with message "Failure while sending mail". This allows the mailer to
+      degrade gracefully if the mail server is misconfigured.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/MailerMDB.java
+        line_start: 78
+        line_end: 91
+        excerpt: |
+          try {
+            textMessage = (TextMessage)recvMsg;
+            xmlMailMessage = textMessage.getText();
+            recMail = Mail.fromXML(xmlMailMessage);
+            sendMail(recMail.getAddress(), recMail.getSubject(), recMail.getContent(),  Locale.getDefault());
+          } catch (MailerAppException me) {
+            //ignore since user probably forgot to set up mail server
+          } catch (XMLDocumentException xde) {
+            throw new EJBException("MailerMDB.onMessage" + xde);
+          } catch(JMSException je) {
+            throw new EJBException("MailerMDB.onMessage" + je);
+          }
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/MailHelper.java
+        line_start: 86
+        line_end: 90
+        excerpt: |
+          } catch (Exception e) {
+            System.err.print("createAndSendMail exception : " + e);
+            throw new MailerAppException("Failure while sending mail");
+          }
+    stack_metadata:
+      ejb.bean: MailerMDB
+
+  - record_key: notification-messaging-entity-0001
+    kind: entity
+    capability_key: notification-messaging
+    requirement: >
+      The Mail entity SHALL contain three string fields: Address (recipient email address),
+      Subject (email subject line), and Content (email body text). All three fields are required
+      elements in the XML representation.
+    confidence: high
+    confidence_basis: >
+      The Mail class defines three private String fields (address, subject, content) with
+      corresponding getter methods. The DTD schema defines all three as required elements
+      (<!ELEMENT Mail (Address, Subject, Content)>) with no optionality. The fromDOM method
+      extracts all three in sequence without null checks, confirming they are mandatory.
+    risk_class: operational
+    basis: >
+      Mail class (line 51-62) declares three private String fields: address, subject, content
+      with corresponding getters (line 75-84). The constructor (line 66-71) accepts all three.
+      The Mail.dtd (line 38) defines the strict sequence: Mail contains Address, Subject, Content
+      in order. The fromDOM method (line 154-165) parses all three sequentially from the DOM.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/Mail.java
+        line_start: 51
+        line_end: 85
+        excerpt: |
+          public class Mail {
+            public static final String XML_MAIL = "Mail";
+            public static final String XML_SUBJECT = "Subject";
+            public static final String XML_ADDRESS = "Address";
+            public static final String XML_CONTENT = "Content";
+            private String address = null;
+            private String subject  = null;
+            private String content = null;
+
+            private Mail() {}
+            public Mail(String address, String subject, String content) {
+              this.address = address;
+              this.subject = subject;
+              this.content = content;
+              return;
+            }
+            public String getAddress() {
+              return address;
+            }
+            public String getSubject() {
+              return subject;
+            }
+            public String getContent() {
+              return content;
+            }
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/rsrc/schemas/Mail.dtd
+        line_start: 38
+        line_end: 42
+        excerpt: |
+          <!ELEMENT Mail (Address, Subject, Content)>
+          <!ELEMENT Address (#PCDATA)>
+          <!ELEMENT Subject (#PCDATA)>
+          <!ELEMENT Content (#PCDATA)>
+    stack_metadata:
+      db.object: Mail class
+
+  - record_key: notification-messaging-integration-0001
+    kind: integration
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL receive email notifications asynchronously via JMS queue messaging,
+      with mail messages queued by order processing workflow transitions (order approval,
+      invoice generation, order completion) as part of their state transition logic.
+    confidence: high
+    confidence_basis: >
+      The MailOrderApprovalTransitionDelegate, MailInvoiceMDB, and MailCompletedOrderTD classes
+      all implement TransitionDelegate interface and explicitly queue messages to JNDINames.MAIL_SENDER_QUEUE.
+      The MailOrderApprovalTransitionDelegate.doTransition (line 80-93) iterates over a collection
+      of XML mail messages from TransitionInfo and sends each via mailHelper.sendMessage(xmlMail).
+      This is invoked as part of the order state machine in the OPC (Order Processing Center).
+    risk_class: operational
+    basis: >
+      MailOrderApprovalTransitionDelegate (line 55-95) implements TransitionDelegate and maintains
+      a Queue obtained from JNDI via JNDINames.MAIL_SENDER_QUEUE. The setup() method (line 66-75)
+      initializes QueueConnectionFactory and Queue. The doTransition method (line 80-93) receives
+      a TransitionInfo containing xmlMailMessage collection and sends each message via
+      mailHelper.sendMessage(xmlMail). This is called as part of the OPC workflow.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/transitions/MailOrderApprovalTransitionDelegate.java
+        line_start: 38
+        line_end: 95
+        excerpt: |
+          package com.sun.j2ee.blueprints.opc.transitions;
+          import javax.jms.*;
+          import com.sun.j2ee.blueprints.servicelocator.ServiceLocatorException;
+          import com.sun.j2ee.blueprints.servicelocator.ejb.ServiceLocator;
+          import com.sun.j2ee.blueprints.processmanager.transitions.*;
+
+          public class MailOrderApprovalTransitionDelegate implements TransitionDelegate {
+            private Queue q;
+            private QueueConnectionFactory qFactory;
+            private QueueHelper mailHelper;
+
+            public MailOrderApprovalTransitionDelegate() {}
+
+            public void setup() throws TransitionException {
+              try {
+                ServiceLocator serviceLocator = new ServiceLocator();
+                qFactory = serviceLocator.getQueueConnectionFactory(JNDINames.QUEUE_CONNECTION_FACTORY);
+                q = serviceLocator.getQueue(JNDINames.MAIL_SENDER_QUEUE);
+                mailHelper = new QueueHelper(qFactory, q);
+              } catch (ServiceLocatorException se) {
+                  throw new TransitionException(se);
+              }
+            }
+
+            public void doTransition(TransitionInfo info) throws TransitionException {
+              String xmlMail = null;
+              Collection mailingList = info.getXMLMessageBatch();
+              try {
+                Iterator it = mailingList.iterator();
+                while(it!= null && it.hasNext()) {
+                    xmlMail = (String) it.next();
+                    mailHelper.sendMessage(xmlMail);
+                }
+              } catch (JMSException je) {
+                  throw new TransitionException(je);
+              }
+            }
+          }
+    stack_metadata:
+      jms.queue: MAIL_SENDER_QUEUE
+      framework: Transition Delegate pattern (OPC)
+
+  - record_key: notification-messaging-workflow-0001
+    kind: workflow
+    capability_key: notification-messaging
+    requirement: >
+      The system SHALL implement an asynchronous email notification workflow that receives
+      order state transition events and dispatches email notifications to customers without
+      impacting order processing latency.
+    confidence: medium
+    confidence_basis: >
+      The mailer component is designed as an asynchronous message consumer (MDB) that listens
+      on a JMS queue. The MailOrderApprovalTransitionDelegate queues messages as part of the
+      order approval workflow (triggered after order creation). The container-managed transaction
+      semantics ensure message receipt atomicity. However, the exact customer notification rules
+      (when emails are sent, which events trigger them) are defined in the OPC transition logic,
+      not in the mailer component itself.
+    risk_class: operational
+    basis: >
+      The workflow is evident from: (1) MailerMDB implements MessageDrivenBean and MessageListener
+      for asynchronous processing, (2) Container-managed transactions (Required) ensure atomicity,
+      (3) MailOrderApprovalTransitionDelegate queues messages from order state transitions,
+      (4) Error handling suppresses mail server failures to avoid order processing rollback.
+      The complete notification rules are in the OPC transition delegates, not captured in mailer
+      component itself.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/mailer/src/ejb-jar.xml
+        line_start: 48
+        line_end: 81
+        excerpt: |
+          <message-driven>
+            <description>opc node to process PurchaseOrders from the Java Pet Store</description>
+            <display-name>MailerMDB</display-name>
+            <transaction-type>Container</transaction-type>
+            <message-driven-destination>
+              <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+          </message-driven>
+          <container-transaction>
+            <method>
+              <ejb-name>MailerMDB</ejb-name>
+              <method-name>onMessage</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+          </container-transaction>
+      - path: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/transitions/MailOrderApprovalTransitionDelegate.java
+        line_start: 77
+        line_end: 93
+        excerpt: |
+          /**
+           * send a Mail message to mailer service, so customer gets an email
+           */
+          public void doTransition(TransitionInfo info) throws TransitionException {
+            String xmlMail = null;
+            Collection mailingList = info.getXMLMessageBatch();
+            try {
+              Iterator it = mailingList.iterator();
+              while(it!= null && it.hasNext()) {
+                  xmlMail = (String) it.next();
+                  mailHelper.sendMessage(xmlMail);
+              }
+            } catch (JMSException je) {
+                throw new TransitionException(je);
+            }
+          }
+    stack_metadata:
+      ejb.bean: MailerMDB
+      ejb.transaction: Required
+      jms.queue: MAIL_SENDER_QUEUE
+
+findings:
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/MailerMDB.java
+    description: >
+      The MailerMDB catches MailerAppException and suppresses it silently with a comment
+      "ignore since user probably forgot to set up mail server". This behavior conflicts
+      with the container-managed transaction model: if the mail server is unavailable,
+      the MDB continues processing and the message is implicitly acknowledged. This may
+      result in lost notifications. It is unclear whether this is intentional (degraded
+      service) or a defect. A human should clarify the intended behavior for mail server
+      unavailability and whether messages should be retried, dead-lettered, or persisted.
+
+  - kind: unparseable
+    path: legacy-source/petstore1.3.2/src/components/mailer/src/com/sun/j2ee/blueprints/mailer/ejb/MailerMDB.java
+    description: >
+      The method comment at line 68-72 refers to "opc node to process PurchaseOrders",
+      but the mailer component is not specific to purchase orders—it is a general-purpose
+      email service that can send any Mail message. The description in ejb-jar.xml at
+      line 49 makes the same claim. This suggests the component was originally specialized
+      for OPC but was later generalized. The scope of which message types currently use
+      the mailer is not visible in the component code itself.
