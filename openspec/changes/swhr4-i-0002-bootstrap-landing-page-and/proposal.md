@@ -1,0 +1,25 @@
+# Bootstrap, landing page and shared site shell
+
+## Why
+
+Every capability in "React Pet Store 4" needs one place to start from and one frame to sit in. Without a shared shell each capability invents its own navigation, header and layout, and nothing owns the landing page.
+
+## What Changes
+
+- Stand up the application boilerplate this initiative builds on, or extend the one that exists.
+- Add the landing page every user arrives at.
+- Add the shared site shell: global navigation, header, footer and page layout that every capability's screens render inside.
+- Add the shared empty, error and loading frames every page reuses.
+
+## Impact
+
+- Every other capability in this initiative depends on this one and is released after it ships.
+- The global navigation carries one entry per primary area:
+
+- Product Catalog (`product-catalog`)
+- Customer Account (`customer-account`)
+- Checkout & Payment (`checkout-payment`)
+- Order Management (`order-management`)
+- Inventory & Fulfillment (`inventory-fulfillment`)
+- Admin Operations (`admin-operations`)
+- Supplier Integration (`supplier-integration`)
