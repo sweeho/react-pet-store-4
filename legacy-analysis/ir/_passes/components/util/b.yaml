@@ -1,0 +1,152 @@
+records:
+  - record_key: ADMIN-DEBUG-CTRL-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide a mechanism to conditionally enable or disable debug output
+      at runtime through a static boolean flag that controls all debug printing.
+    confidence: high
+    confidence_basis: >
+      The Debug class declares a public static final boolean field debuggingOn that is checked
+      by every debug print method. All debug output is gated on this flag, and the flag is
+      initialized to false by default. This provides a clear, single point of control.
+    risk_class: operational
+    basis: >
+      The debuggingOn field (line 46) is the sole control mechanism. Every debug method
+      checks this flag before producing output (print method line 49, println line 55,
+      print(Exception) line 69, print(Throwable) line 69).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 46
+        line_end: 46
+        excerpt: |
+          public static final boolean debuggingOn = false;
+
+  - record_key: ADMIN-DEBUG-MSG-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide methods to print debug messages to standard error output
+      when debugging is enabled, in two forms: print (without line termination) and println
+      (with line termination and ">>" prefix).
+    confidence: high
+    confidence_basis: >
+      Two overloaded methods print(String msg) and println(String msg) are declared and
+      both follow the same pattern: check debuggingOn flag, then output to System.err.
+      The println method adds a specific prefix (">>" characters) to identify debug output.
+      This is enforced in the code consistently.
+    risk_class: operational
+    basis: >
+      The print method (line 48-52) outputs directly to System.err.print() if debuggingOn is true.
+      The println method (line 54-58) outputs to System.err.println() with a ">>" prefix if
+      debuggingOn is true. Both methods gate output on the debuggingOn flag.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 48
+        line_end: 58
+        excerpt: |
+          public static void print(String msg) {
+              if (debuggingOn) {
+                  System.err.print(msg);
+              }
+          }
+
+          public static void println(String msg) {
+              if (debuggingOn) {
+                  System.err.println(">>" + msg);
+              }
+          }
+
+  - record_key: ADMIN-DEBUG-EXC-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL provide methods to print exception and throwable information when
+      debugging is enabled. When both a Throwable and an optional message are provided,
+      the system SHALL print the message, the exception message, and the full stack trace.
+      When only an Exception or Throwable is provided, the stack trace alone SHALL be printed.
+    confidence: high
+    confidence_basis: >
+      Four overloaded methods handle exceptions: print(Exception e, String msg),
+      print(Exception e), print(Throwable t, String msg), and print(Throwable t).
+      The Exception methods delegate to the Throwable methods. The implementation
+      consistently prints the message, exception message, and stack trace when the
+      flag is enabled. The pattern is deterministic and clearly implemented.
+    risk_class: operational
+    basis: >
+      The print(Exception e, String msg) method (line 60-62) delegates to print(Throwable, String).
+      The print(Exception e) method (line 64-66) delegates to print(Exception e, null).
+      The print(Throwable t, String msg) method (line 68-75) prints the throwable message
+      (line 70), the optional message (line 71-72), and calls printStackTrace() (line 73).
+      All output is gated on debuggingOn flag. The print(Throwable t) method (line 77-79)
+      delegates to print(t, null).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 60
+        line_end: 79
+        excerpt: |
+          public static void print(Exception e, String msg) {
+              print((Throwable)e, msg);
+          }
+
+          public static void print(Exception e) {
+              print(e, null);
+          }
+
+          public static void print(Throwable t, String msg) {
+              if (debuggingOn) {
+                  System.out.println("Received throwable with Message: "+t.getMessage());
+                  if (msg != null)
+                      System.out.print(msg);
+                  t.printStackTrace();
+              }
+          }
+
+          public static void print(Throwable t) {
+              print(t, null);
+          }
+
+  - record_key: ADMIN-DEBUG-OUTPUT-0001
+    kind: business-rule
+    capability_key: admin-operations
+    requirement: >
+      The system SHALL send debug output to standard error (System.err) for regular debug
+      messages and to standard output (System.out) for exception/throwable diagnostics.
+    confidence: medium
+    confidence_basis: >
+      Regular debug messages go to System.err (lines 50, 56), which is appropriate for
+      diagnostic output. Exception handling uses System.out.println (line 70) for the
+      exception message before calling printStackTrace(). This mix of System.out and System.err
+      is implemented but there is no documented rationale for the choice. The asymmetry
+      between regular debug (stderr) and exception handling (stdout) is unusual and may be
+      an implementation detail rather than a designed distinction.
+    risk_class: operational
+    basis: >
+      print() method uses System.err.print() (line 50). println() method uses System.err.println()
+      (line 56). Exception handling uses System.out.println() for the throwable message (line 70)
+      and calls printStackTrace() which prints to System.err by default. This creates an
+      asymmetry where regular debug messages and exception stack traces go to stderr, but the
+      exception message itself goes to stdout.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 50
+        line_end: 56
+        excerpt: |
+          System.err.print(msg);
+      - path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+        line_start: 70
+        line_end: 73
+        excerpt: |
+          System.out.println("Received throwable with Message: "+t.getMessage());
+          if (msg != null)
+              System.out.print(msg);
+          t.printStackTrace();
+
+findings:
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/components/util/tracer/src/com/sun/j2ee/blueprints/util/tracer/Debug.java
+    description: >
+      The debuggingOn flag is hardcoded to false and declared as final, which means debugging
+      cannot be enabled at runtime. A human needs to decide whether this is intentional (a
+      disabled debug facility) or a defect (the flag should be modifiable or read from configuration).
+      If debugging needs to be enabled, code changes or configuration injection would be required.
