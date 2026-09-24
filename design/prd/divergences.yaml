@@ -1,13 +1,213 @@
 divergences:
-  - claim: The $50,000 threshold in the code has no behavior attached
+  - claim: |
+      Orders below a single $500 order-total threshold are approved automatically; everything else waits for an administrator.
     code_says: |
-      PurchaseOrderMDB.java checks: "if (purchaseOrder.getTotalPrice() < 500) return true; if (purchaseOrder.getTotalPrice() < 50000) return true;"
-      The second threshold exists but has no distinct behavior — both code paths return true, indicating automatic approval.
+      PurchaseOrderMDB.canIApprove():
+        if (locale.equals(Locale.US)) { if (purchaseOrder.getTotalPrice() < 500) return true; }
+        else if (locale.equals(Locale.JAPAN)) { if (purchaseOrder.getTotalPrice() < 50000) return true; }
+        return false;
+      The threshold depends on the order's locale. en_US auto-approves under 500 and ja_JP under 50000. A zh_CN order is never auto-approved at any total.
     document_says: |
+      PRD OP-1.2: "An order with a total below $500 is approved automatically, with no human involvement."
+      PRD OP-1.4: "The threshold is a single monetary value applied to the order total, not per line or per category."
       PRD notes: "A second threshold at $50,000 exists in the code but has no behaviour attached beyond the first, so all review effectively happens at one level."
-    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/PurchaseOrderMDB.java
-    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#p214-p218
+      User manual: "Orders under $500 are approved without anyone touching them."
+    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/PurchaseOrderMDB.java#L183-L191
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L202-L218
     capability: order-approval
+    severity: major
+    notes: |
+      The 50000 figure is the ja_JP threshold (prices are per-locale, see the prices entry), not a dead second tier. The PRD keeps the locale-specific rule as current and asks under Open questions whether zh_CN should get a threshold of its own. This entry replaces an earlier one that read the 50000 check as having no behaviour.
+
+  - claim: |
+      Every item has one price that serves all three locales, formatted per locale but never converted.
+    code_says: |
+      Populate-UTF8.xml gives each item one ItemDetails per locale, each with its own ListPrice and UnitCost. For EST-1:
+        en-US  ListPrice 16.50  UnitCost 10.00
+        ja-JP  ListPrice 1951   UnitCost 1551
+        zh-CN  ListPrice 142    UnitCost 86
+      The search, item and cart queries read listprice and unitcost from item_details filtered by the request locale.
+    document_says: |
+      PRD data model: "Prices do not [vary by locale] — one price serves all three locales, formatted per locale but never converted."
+      PRD assumption 2: "Every item has a single price in a single currency regardless of the customer's locale."
+      PRD open question 6: "Should prices be per-locale rather than one price formatted three ways?"
+    code_ref: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/populate/Populate-UTF8.xml#L552-L575
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L308
+    capability: product-catalog
+    severity: major
+    notes: |
+      The PRD treats per-locale prices as current. That also explains why the approval threshold is per-locale.
+
+  - claim: |
+      Every order carries exactly one of four statuses: Pending, Approved, Denied, Completed.
+    code_says: |
+      InvoiceMDB.doWork():
+        if(orderDone) { processManager.updateStatus(orderId, OrderStatusNames.COMPLETED); ... }
+        else { processManager.updateStatus(orderId, OrderStatusNames.SHIPPED_PART); }
+      An order whose invoice covers only some lines moves to a fifth status, SHIPPED_PART.
+    document_says: |
+      PRD OP-1.5: "Every order carries exactly one of four statuses: Pending, Approved, Denied, Completed"
+      User manual, "The four statuses": Pending, Approved, Denied, Completed.
+    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/InvoiceMDB.java#L157-L173
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L205
+    capability: order-management
+    severity: major
+    notes: |
+      The PRD adopts five statuses, with Partly shipped as the fifth.
+
+  - claim: |
+      The admin View Non-Pending Orders tab shows every order that is no longer pending.
+    code_says: |
+      DataSource.getServerOrderData() loads only four statuses:
+        server.getOrders(PetStoreProxy.Order.PENDING) ... APPROVED ... DENIED ... COMPLETED
+      Orders in SHIPPED_PART are never fetched, so a partly shipped order disappears from both admin tabs.
+    document_says: |
+      User manual: "View Non-Pending Orders | Orders already approved, denied or completed | Read only"
+      PRD AD-1.1: "Pending orders and decided orders are shown in separate queues"
+    code_ref: legacy-source/petstore1.3.2/src/apps/admin/src/client/com/sun/j2ee/blueprints/admin/client/DataSource.java#L131-L144
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-user-manual/extracted.md#L260-L267
+    capability: admin-operations
+    severity: major
+    notes: |
+      The PRD shows partly shipped orders in the non-pending tab.
+
+  - claim: |
+      The supplier receives no customer information, only line items.
+    code_says: |
+      OrderApprovalMDB.getXmlPO() builds the supplier order with:
+        supplierOrderXDE.setShippingAddress(cinfo.getGivenName(), cinfo.getFamilyName(),
+          addr.getStreetName1(), addr.getCity(), addr.getState(), addr.getCountry(),
+          addr.getZipCode(), cinfo.getEmail(), cinfo.getTelephone());
+    document_says: |
+      PRD boundaries: "The supplier never sees customer data. It receives line items to fill, not people to ship to."
+      PRD SP-1.9: "The supplier receives no customer information, only line items"
+    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/OrderApprovalMDB.java#L248-L268
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L106
+    capability: supplier-integration
+    severity: major
+    notes: |
+      The PRD keeps the shipping details a supplier needs to ship, and asks whether e-mail and telephone should be withheld.
+
+  - claim: |
+      The customer is e-mailed at every order status change, including a confirmation when the order is placed.
+    code_says: |
+      PurchaseOrderMDB.onMessage() sends nothing when the order is not auto-approved:
+        if(approval != null) { doTransition(approval); } //else wait for admin to approve/deny orders
+      Customer mail is sent only by MailOrderApprovalMDB (approve/deny), MailInvoiceMDB (each shipment) and MailCompletedOrderMDB (completion). Nothing is mailed at placement, yet order_completed.jsp L52 tells the customer "You should receive a confirmation e-mail soon at ...".
+    document_says: |
+      PRD OP-1.10: "Each status transition sends the customer an e-mail at the address on the order"
+      User manual: "'Your Order is Complete' appears with your order number and the e-mail address the confirmation is going to."
+      User manual: "Every step that changes your order's status sends you an e-mail"
+    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/PurchaseOrderMDB.java#L114-L136
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-user-manual/extracted.md#L187-L211
+    capability: notification-messaging
+    severity: major
+    notes: |
+      An order held as Pending produces no e-mail until an administrator decides it. The PRD lists approval, denial, each shipment and completion as the e-mail events, and asks whether placement should send one.
+
+  - claim: |
+      Administrators and supplier staff are separate roles with no overlap.
+    code_says: |
+      supplier web.xml protects /RcvrRequestProcessor with <auth-constraint><role-name>administrator</role-name></auth-constraint>, and displayinventory.jsp checks request.isUserInRole("administrator").
+      admin web.xml protects /AdminRequestProcessor with the same <role-name>administrator</role-name>.
+      One administrator identity can use both applications.
+    document_says: |
+      PRD: "Three roles, each with its own interface and no overlap between them."
+      PRD, supplier staff: "Has no view of orders or customers at all."
+    code_ref: legacy-source/petstore1.3.2/src/apps/supplier/src/docroot/WEB-INF/web.xml#L90-L117
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L42-L70
+    capability: supplier-integration
+    severity: major
+    notes: |
+      The PRD assumes two separate roles. The admin side is at legacy-source/petstore1.3.2/src/apps/admin/src/docroot/WEB-INF/web.xml#L75-L101.
+
+  - claim: |
+      Adding an item that is already in the cart increases its quantity.
+    code_says: |
+      ShoppingCartLocalEJB.addItem(String itemID) { cart.put(itemID, new Integer(1)); }
+      CartEJBAction handles ADD_ITEM with cart.addItem(ce.getItemId()), so re-adding an item resets its line to quantity 1.
+    document_says: |
+      PRD SF-4.1: "Adding an item already in the cart increments its quantity rather than adding a second line"
+      User manual: "Adding an item you already have raises its quantity instead of creating a second line."
+    code_ref: legacy-source/petstore1.3.2/src/components/cart/src/com/sun/j2ee/blueprints/cart/ejb/ShoppingCartLocalEJB.java#L111-L117
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L147
+    capability: shopping-cart
     severity: minor
     notes: |
-      This is not a functional divergence — both code and documentation describe the same behavior (only $500 threshold is functional). The $50,000 check appears to be dead code or vestigial from an earlier design. No behavior change required.
+      The PRD follows the documents (increment). No second line is created either way.
+
+  - claim: |
+      Sales figures count only orders that went through, so denials show as a drop.
+    code_says: |
+      OPCAdminFacadeEJB.getChartInfo() iterates pohome.findPOBetweenDates(start, end), whose EJB-QL is
+        SELECT OBJECT(a) From PurchaseOrder a WHERE a.poDate BETWEEN ?1 AND ?2
+      No status filter, so pending and denied orders are counted. REVENUE sums quantity*unitPrice per category, and the other request sums line quantity.
+    document_says: |
+      User manual: "Sales figures count orders, so a run of large denials will show up as a drop in a category even though customers tried to buy."
+      User manual: "The Bar Chart shows the number of sales per category"
+    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/admin/ejb/OPCAdminFacadeEJB.java#L169-L256
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-user-manual/extracted.md#L298-L310
+    capability: admin-operations
+    severity: minor
+    notes: |
+      The bar chart measures units ordered, not number of orders or sales. The PRD describes the pie chart as revenue share and the bar chart as quantity per category, and asks whether denied orders should be excluded.
+
+  - claim: |
+      After an inventory update the supplier notifies the Order Processing Centre, which re-examines waiting orders and completes those the new stock covers.
+    code_says: |
+      RcvrRequestProcessor.doPost("updateinventory"):
+        updateInventory(req);
+        Collection invoices = procPO.processPendingPO();
+        sendInvoices(invoices);
+      The supplier itself retries its own pending supplier orders and sends invoices. The OPC is told only what shipped, never that stock changed.
+    document_says: |
+      PRD SP-1.7: "Every committed change notifies the OPC"
+      User manual: "Every time you submit, the supplier tells the Order Processing Centre what changed. The OPC looks again at approved orders it could not fill before"
+    code_ref: legacy-source/petstore1.3.2/src/apps/supplier/src/com/sun/j2ee/blueprints/supplier/inventory/web/RcvrRequestProcessor.java#L179-L189
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-user-manual/extracted.md#L335-L339
+    capability: inventory-fulfillment
+    severity: minor
+    notes: |
+      The customer-visible outcome is the same. The PRD places the retry in inventory-fulfillment (the supplier side) and the status change in order processing on receipt of the invoice.
+
+  - claim: |
+      Search matches keywords against item names and descriptions.
+    code_says: |
+      SEARCH_ITEMS: where b.locale = ? and ((lower(name) like ? or lower(catid) like ? or lower(b.descn) like ?) or ...)
+      Each keyword is a case-insensitive substring match on product name, category id or item description, so "dogs" returns every item in the DOGS category.
+    document_says: |
+      PRD SF-3.2: "Search matches any of the supplied keywords against item names and descriptions"
+      User manual: "Search looks at item names and descriptions and returns individual items"
+    code_ref: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/CatalogDAOSQL.xml#L112-L126
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L138
+    capability: product-catalog
+    severity: minor
+
+  - claim: |
+      The checkout (order entry) screen collects credit card details.
+    code_says: |
+      enter_order_information.jsp (<waf:form ... action="order.do"> L50 to </waf:form> L332) has billing and shipping contact fields only, with no card field. The stored account card is used.
+    document_says: |
+      openspec checkout-payment spec: "The Order Entry Screen SHALL collect billing and shipping address information, credit card details, and display order summary for confirmation before placement."
+      (The user manual agrees with the code: "The form does not repeat your credit card details.")
+    code_ref: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/enter_order_information.jsp#L50-L332
+    document_ref: openspec/changes/sx-checkout-payment/specs/checkout-payment/spec.md#L244-L246
+    capability: checkout-payment
+    severity: minor
+    notes: |
+      The PRD follows the code and the manual: the checkout shows the account card and does not collect one.
+
+  - claim: |
+      Card expiry years offered on the account form.
+    code_says: |
+      create_customer.jsp credit_card_expiry_year options: 2001, 2002, 2003, 2004.
+      edit_customer.jsp options: 2002, 2003, 2004, 2005.
+    document_says: |
+      Screen mockups, "Create account": "Expiry year 2026 2027 2028 2029"
+      openspec checkout-payment spec: "present credit card expiry years in the range 2002-2005"
+    code_ref: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/create_customer.jsp#L168-L173
+    document_ref: design/sources/html/java-pet-store-screen-mockups/extracted.md#create-account
+    capability: customer-account
+    severity: minor
+    notes: |
+      A fixed list of past years cannot accept a current card. The PRD assumes a rolling window starting at the current year.
