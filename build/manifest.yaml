@@ -1,378 +1,317 @@
 schemaVersion: 1
 program:
-  key: petstore-legacy-extraction
-  title: PetStore Legacy Application Specification Extraction
+  key: SWHR4-N-0001
+  title: React Pet Store 4
   source: extraction
-  generator: vortex-spec-extraction
-  sourceRef: vortex/legacy-spec/sx-0001
 capabilities:
-  - slug: product-catalog
-    title: Product Catalog
+  - slug: site-shell
+    title: Bootstrap, landing page and shared site shell
     order: 1
     dependsOn: []
-    priority: 0
     change:
-      dir: openspec/changes/sx-product-catalog
-      specCapabilities:
-        - product-catalog
+      dir: openspec/changes/swhr4-i-0002-bootstrap-landing-page-and
+      specCapabilities: [site-shell]
     canvas:
-      problem: "E-commerce systems must provide customers with the ability to browse and search products efficiently across categories and locales, with support for pagination and full-text search."
-      solution: "A hierarchical, locale-aware product catalog service providing read-only access to product data organized by categories, products, and SKUs with pagination and keyword search."
+      problem: "Every storefront, administration and supplier screen needs one frame to sit in. Without a shared shell each capability invents its own banner, navigation and error handling, and nothing owns the home page customers arrive at."
+      solution: "A shared site shell on the pinned Vite React + Nitro stack: the Home page as the entry to browsing, a banner on every storefront page with the search box, Account, Cart and Sign in or Sign out links and English, Japanese and Chinese language switches, a Pets panel listing the five categories, and shared empty, loading and general-error frames."
       userStories:
-        - "As a customer, I want to browse product categories localized to my preferred language, so I can find products relevant to my locale."
-        - "As a customer, I want to search products by keyword and see results with pagination, so I can find items without browsing the full catalog."
-        - "As a customer, I want to view detailed product information including item attributes and prices, so I can make informed purchase decisions."
+        - "As a shopper, I want a home page that shows the five pet categories, so I can start browsing straight away."
+        - "As a shopper, I want the search box, Account, Cart and Sign in links on every page, so I can move around the store from anywhere."
+        - "As a shopper, I want to switch the site between English, Japanese and Chinese from any page, so I can shop in my own language."
+        - "As a shopper, I want a clear error page with a way back to Home when something fails on the server, so I am never stranded."
       acceptanceCriteria:
-        - "Catalog displays categories and products localized for en_US, ja_JP, and zh_CN, sorted alphabetically by name."
-        - "Search results show matching items with pagination (configurable page size, default 2 items) and Previous/Next navigation."
-        - "Item details include itemId, category, product name, description, unit cost formatted as currency, and item attributes."
-        - "All operations are read-only and stateless; catalog provides unchecked (public) access without authentication."
+        - "Home shows the five categories (Birds, Cats, Dogs, Fish, Reptiles) as the entry to browsing, plus a pet-tips banner when enabled."
+        - "Every storefront page carries the banner with the search box, Account, Cart, Sign in or Sign out, and English, Japanese and Chinese language switches."
+        - "A Pets panel lists the five categories on every storefront page, and a My List panel appears when enabled."
+        - "A server failure renders the General error page with a link back to Home."
+        - "Values rendered into pages are escaped, so user-supplied text cannot inject markup."
       outOfScope:
-        - "Product catalog administration (add, modify, delete operations)"
-        - "Role-based access control or authentication"
-        - "Search result ranking, relevance scoring, or faceted search"
-        - "Server-side caching policy or cache invalidation"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
+        - "Catalogue administration: categories, products and items are reference data loaded at install."
+        - "A Java Web Start desktop client or any other non-browser client."
       screens:
-        - "Category listing screen: Display list of available product categories with names and descriptions, localized for user's preferred language."
-        - "Search results screen: Display items matching search keywords with pagination, showing no-results message when search yields no items."
-        - "Product catalog screen: Display hierarchical product browsing with categories, products, and items including pagination controls."
-    evidence:
-      irRefs: ["PROD-REQ-0001", "PROD-REQ-0002", "PROD-REQ-0003", "PROD-REQ-0004", "SCREEN-0001", "SCREEN-0005", "product-catalog-screen-0001"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Home: picture of the five categories as the entry to browsing, plus a pet-tips banner when enabled."
+        - "Storefront banner and Pets panel: search box, Account, Cart, Sign in or Sign out, language switches for English, Japanese and Chinese; Pets panel of the five categories and My List panel when enabled."
+        - "General error: a server failure, with a way back to Home."
+
+  - slug: product-catalog
+    title: Product Catalog
+    order: 2
+    dependsOn: [site-shell]
+    change:
+      dir: openspec/changes/swhr4-i-0003-product-catalog
+      specCapabilities: [product-catalog]
+    canvas:
+      problem: "A shopper wants to find a specific pet quickly and see what it costs, in their own language, without creating an account just to look around."
+      solution: "A locale-aware, read-only catalogue of category, product and item with per-locale prices, paged listings and any-keyword search, open to anonymous visitors in English, Japanese and Chinese."
+      userStories:
+        - "As a shopper, I want to browse from a category to its products to an item, so I can find the pet I want."
+        - "As a shopper, I want to search by any keyword and page through the matches, so I can find an item without browsing the whole catalogue."
+        - "As a shopper, I want the catalogue content and prices shown in my locale, so I can shop in English, Japanese or Chinese."
+        - "As a shopper, I want to browse and search without signing in, so I only create an account when I buy."
+      acceptanceCriteria:
+        - "Category, product and item listings are paged, with Previous and Next shown only when a page exists in that direction."
+        - "Item detail shows the photograph, list price, customer price, description and Add to Cart, with a note that availability is confirmed after ordering."
+        - "Search matches any of the entered keywords, pages the results with the keywords preserved, and shows an explicit no-results message for an empty query or no matches."
+        - "Catalogue content and prices are served per locale (en_US, ja_JP, zh_CN); each locale carries its own price and nothing is converted between locales."
+        - "Non-Latin search input round-trips through request and response encoding, and prices are formatted per locale."
+        - "All catalogue screens are reachable without signing in."
+      outOfScope:
+        - "Catalogue administration (adding, editing or deleting categories, products or items)."
+        - "Customer-facing stock levels; availability is resolved after ordering and never shown before."
+        - "Currency conversion between locales."
+      screens:
+        - "Category listing: products in a category with short descriptions, paged, with Previous and Next shown only when a page exists in that direction."
+        - "Product listing: items for a product with description, price and Add to Cart, paged."
+        - "Item detail: photograph, list price, customer price, description and Add to Cart, with a note that availability is confirmed after ordering."
+        - "Search results: matching items with description, price and Add to Cart, paged with the keywords preserved, and an explicit no-results message for an empty query or no matches."
 
   - slug: customer-account
     title: Customer Account
-    order: 2
-    dependsOn: []
-    priority: 0
+    order: 3
+    dependsOn: [site-shell]
     change:
-      dir: openspec/changes/sx-customer-account
-      specCapabilities:
-        - customer-account
+      dir: openspec/changes/swhr4-i-0004-customer-account
+      specCapabilities: [customer-account]
     canvas:
-      problem: "E-commerce systems require customer authentication, account creation, profile management, and preference storage to personalize the shopping experience and enable order tracking."
-      solution: "Customer account lifecycle management with form-based authentication, account registration, contact/billing information storage, and user profile preferences for locale and display options."
+      problem: "A shopper must be identified to place an order and have their contact, card and preferences on file, but must be able to see and change only their own account."
+      solution: "Sign-in, account creation with duplicate-name rejection, a remembered user name, and protected account screens to view and edit contact details, the stored card and profile preferences (language, favourite category, MyList, pet tips)."
       userStories:
-        - "As a new customer, I want to create an account with username and password, so I can place orders and track my purchases."
-        - "As an existing customer, I want to sign in with my credentials, so I can access my account and shopping history."
-        - "As a customer, I want my account to remember my preferred language and category interests, so the site is personalized to my preferences."
+        - "As a new shopper, I want to create an account with my contact, card and profile details in one form, so I can check out."
+        - "As a returning shopper, I want to sign in and have my user name remembered on request, so signing in is quick."
+        - "As a shopper, I want to review and edit my contact details, card and preferences, so my next order uses current information."
+        - "As a shopper, I want my language, favourite category, MyList and pet-tips preferences kept, so the store is personalised to me."
       acceptanceCriteria:
-        - "Sign-on screen provides dual options: existing customer login and new account creation, each with appropriate form fields and validation."
-        - "Account creation requires username and password confirmation; duplicate usernames are rejected with DuplicateAccountException."
-        - "Sign-on uses j_signon_check endpoint with standard J2EE form-based authentication (j_username, j_password parameters)."
-        - "Customer profiles store preferred language, favorite category, MyList preference, and banner preference; locale is derived from preferred language."
-        - "Sessions expire after 15 minutes of inactivity per session-config."
-        - "Optionally remember username in bp_signon cookie for future sign-in convenience."
+        - "Creating an account with a user name that already exists shows the Duplicate account screen and creates no account."
+        - "Failed sign-in shows the Sign-in failed screen, which states the credentials were not found and invites a retry."
+        - "The user name is remembered on request; the password is never remembered."
+        - "Account overview and Edit account require sign-in, and a customer can read and write only their own account."
+        - "Edit account shows current values, and the user name and password cannot be changed."
+        - "Card numbers are tokenised and never stored or shown in full; only the last four digits are displayed."
+        - "Card expiry years offer a rolling window starting at the current year."
+        - "The storefront session expires after 15 minutes idle."
       outOfScope:
-        - "Password reset or account recovery workflows"
-        - "Two-factor authentication or biometric sign-in"
-        - "Account deletion or data export"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
+        - "Self-service password reset or any lost-password recovery path."
+        - "Customer order history."
       screens:
-        - "Sign-on screen: Provide dual options for existing customers (sign in) and new customers (create account) with appropriate form fields and validation."
-        - "Customer account details: Display and allow editing of customer contact information, addresses, and profile preferences."
-        - "Customer profile preferences: Edit preferred language, favorite category, MyList preference, and banner preference."
-        - "Account information display: Show customer account status, registered contact information, and saved addresses."
-        - "Customer contact information form: Edit customer name, email, and address details."
-    evidence:
-      irRefs: ["CUST-REQ-0001", "CUST-REQ-0002", "CUST-REQ-0003", "CUST-REQ-0004", "CUST-REQ-0005", "CUST-REQ-0006", "CUST-REQ-0007", "CUST-REQ-0008", "SIGNON-REQ-0001", "CUST-AUTH-0012", "CUST-AUTH-0013", "SCREEN-0004", "cust-screen-0001", "cust-screen-0002", "cust-screen-0003"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Sign in: returning-customer form (user name remembered on request, password never) beside a new-customer form (user name, password, password repeated)."
+        - "Sign-in failed: states the credentials were not found and invites a retry."
+        - "Create account: contact information, credit card information and profile information (language, favourite category, MyList, pet tips) in one form."
+        - "Duplicate account: states the user name is taken, and no account is created."
+        - "Account overview: read-only view of contact details, card and profile preferences, with a link to Edit account."
+        - "Edit account: the account form with current values, where the user name and password cannot be changed."
 
   - slug: shopping-cart
     title: Shopping Cart
-    order: 3
-    dependsOn: ["product-catalog"]
-    priority: 0
+    order: 4
+    dependsOn: [product-catalog]
     change:
-      dir: openspec/changes/sx-shopping-cart
-      specCapabilities:
-        - shopping-cart
+      dir: openspec/changes/swhr4-i-0005-shopping-cart
+      specCapabilities: [shopping-cart]
     canvas:
-      problem: "Customers need to collect and manage items across a browsing session without committing to immediate purchase, with flexible quantity management and cost visibility."
-      solution: "A session-based shopping cart service that enables customers to add, remove, and update item quantities with real-time subtotal calculation in the selected locale."
+      problem: "A shopper collects items while browsing and needs to adjust what and how much they are buying before they commit, without having to sign in first."
+      solution: "A session-scoped cart with add, remove and batch quantity update (a zero quantity removes the line), a locale-priced subtotal, emptied on sign-out or session expiry."
       userStories:
-        - "As a customer, I want to add products to my cart and update quantities, so I can prepare a flexible purchase order."
-        - "As a customer, I want to remove items from my cart, so I can refine my selection before checkout."
-        - "As a customer, I want to see my cart subtotal in my preferred currency, so I can understand the cost of my intended purchase."
+        - "As a shopper, I want to add items to a cart from listings, item detail and search results, so I can buy several pets in one order."
+        - "As a shopper, I want to change several quantities and apply them with one Update Cart, so adjusting my order is quick."
+        - "As a shopper, I want to remove a line or set it to zero, so I can drop an item I no longer want."
+        - "As a shopper, I want to see each unit price and the total in my locale, so I know what I will pay."
       acceptanceCriteria:
-        - "Cart supports atomic add-item operations with default quantity of 1."
-        - "Cart supports removing items by itemId and updating quantities for multiple items atomically in a single transaction."
-        - "Cart calculates subtotal by summing unit cost × quantity for each line item and displays in user's preferred currency."
-        - "Cart can be emptied, removing all items and resetting state for new shopping session."
-        - "Cart items display product name, quantity input field, unit cost, and calculated line total."
+        - "Adding an item already in the cart increases that line's quantity."
+        - "Update Cart applies all edited quantities together, and a zero quantity removes the line."
+        - "Each line shows a link to the item, Remove, an editable quantity and the unit price, and the cart shows the total, Update Cart and Check Out."
+        - "An empty cart shows 'Your Shopping Cart is Empty.' and offers no checkout."
+        - "The cart does not require sign-in and is emptied on sign-out or session expiry."
       outOfScope:
-        - "Pricing calculations beyond unit cost × quantity (discounts, surcharges, tax)"
-        - "Cart persistence across sessions; cart is session-scoped"
-        - "Inventory reservation or hold logic"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-    evidence:
-      irRefs: ["CART-REQ-0001", "CART-REQ-0002", "CART-REQ-0003", "CART-REQ-0004", "CART-REQ-0005"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Stock reservation or availability checks when adding to the cart."
+        - "Persisting the cart across sessions."
+      screens:
+        - "Shopping cart: one line per item with a link to the item, Remove, an editable quantity and the unit price, plus the total, Update Cart and Check Out. When empty it shows 'Your Shopping Cart is Empty.' and offers no checkout."
 
   - slug: checkout-payment
     title: Checkout & Payment
-    order: 4
-    dependsOn: ["shopping-cart", "customer-account"]
-    priority: 0
+    order: 5
+    dependsOn: [shopping-cart, customer-account]
     change:
-      dir: openspec/changes/sx-checkout-payment
-      specCapabilities:
-        - checkout-payment
+      dir: openspec/changes/swhr4-i-0006-checkout-payment
+      specCapabilities: [checkout-payment]
     canvas:
-      problem: "Order placement requires collection of billing address, shipping address, and payment card information with validation and persistence for order processing."
-      solution: "Order checkout workflow collecting and validating customer contact and payment details, creating a purchase order with line items and computing total price."
+      problem: "Turning a cart into an order must be quick for the shopper and must never wait on approval, the supplier or e-mail, or an order could be lost or a customer blocked."
+      solution: "A checkout form capturing separate billing and shipping addresses pre-filled from the account, using the stored account card, rejecting an empty cart, and handing the order off to processing without waiting on it before showing the confirmation."
       userStories:
-        - "As a customer, I want to enter billing and shipping address information during checkout, so the order can be shipped and invoiced correctly."
-        - "As a customer, I want to provide credit card information for payment, so the transaction can be processed."
-        - "As a system, I want to validate the cart contains items before allowing order placement, so orders are never created for empty carts."
+        - "As a shopper, I want to be sent to sign in only when I check out and then returned to Checkout, so I can browse anonymously."
+        - "As a shopper, I want billing and shipping addresses pre-filled from my account, so checkout takes as few steps as possible."
+        - "As a shopper, I want a confirmation with my order number, notification e-mail address and total, so I have a record of my order."
       acceptanceCriteria:
-        - "Order placement requires non-empty shopping cart; orders with empty carts raise ShoppingCartEmptyOrderException and are rejected."
-        - "Billing information collection includes first name and last name."
-        - "Shipping address collection includes street address, city, state, ZIP code, and country."
-        - "Credit card information collection includes card number, card type (Visa, MasterCard, etc.), and expiration date (MM/YYYY format)."
-        - "Order form posts to order.do endpoint and redirects to order confirmation screen on success."
+        - "Checkout requires sign-in; an anonymous shopper is sent to Sign in and returned to Checkout afterwards."
+        - "Billing and shipping information are pre-filled from the account and required, except the second address line."
+        - "Checkout shows the card that will be used (last four digits only) and the order total."
+        - "Submitting an order with an empty cart shows the Empty-cart checkout error and creates no order."
+        - "The confirmation shows 'Your order is complete' with the order number, the notification e-mail address and the total, and does not wait on approval, fulfilment or e-mail."
       outOfScope:
-        - "Actual credit card authorization or payment processing against payment networks"
-        - "Address validation against postal databases"
-        - "Fraud detection or risk assessment (handled by order-approval capability)"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
+        - "Real payment processing: no authorisation, charge or decline path."
+        - "Tax calculation; the order total is the sum of the line items."
+        - "Shipping carriers, rates or tracking."
       screens:
-        - "Order entry screen: Collect billing and shipping address information, credit card details, and display order summary for confirmation before placement."
-    evidence:
-      irRefs: ["CKPT-REQ-0001", "CKPT-REQ-0002", "CKPT-REQ-0003", "CKPT-REQ-0004", "SCREEN-0003"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Checkout: billing information and shipping information, both pre-filled from the account and required except the second address line, plus the card that will be used and the order total."
+        - "Empty-cart checkout error: shown when an order is submitted with nothing in the cart."
+        - "Order confirmation: 'Your order is complete' with the order number, the e-mail address notifications go to and the total."
 
   - slug: order-management
     title: Order Management
-    order: 5
-    dependsOn: ["checkout-payment"]
-    priority: 0
+    order: 6
+    dependsOn: [checkout-payment]
     change:
-      dir: openspec/changes/sx-order-management
-      specCapabilities:
-        - order-management
+      dir: openspec/changes/swhr4-i-0007-order-management
+      specCapabilities: [order-management]
     canvas:
-      problem: "The order processing system requires persistent storage of purchase orders with unique identifiers, line items, customer contact/billing information, and order status tracking."
-      solution: "Order persistence and lifecycle management with unique order ID generation, line item tracking, and status-based fulfillment coordination."
+      problem: "An order moves through approval, fulfilment and notification over time, so it needs a durable record that later account changes cannot rewrite and that no step can lose."
+      solution: "A purchase order record with a generated order number, its own copy of the billing and shipping addresses and card, per-line unit price and quantity shipped, the order total and the locale, carrying exactly one status."
       userStories:
-        - "As the system, I want to create and persist purchase orders with unique IDs and complete customer/payment information, so orders can be tracked and fulfilled."
-        - "As a customer, I want to see my order with all line items, costs, and totals, so I can verify my purchase."
-        - "As a fulfillment system, I want to query orders by status and track line item fulfillment, so inventory and shipping operations can proceed."
+        - "As a shopper, I want my order to keep the prices and addresses I ordered with, so later account or price changes do not alter it."
+        - "As an administrator, I want every order to carry one clear status, so I know which orders need a decision."
+        - "As supplier staff, I want each line to track quantity shipped separately from quantity ordered, so partial shipments are recorded correctly."
       acceptanceCriteria:
-        - "Orders have unique sequential IDs generated by UniqueIdGenerator with seed '1001'."
-        - "Orders store orderId, userId, orderDate (timestamp), billing info (ContactInfo), shipping info (ContactInfo), credit card, and line items with partial shipment support."
-        - "Order total price is calculated as sum of (unit cost × quantity) for each line item."
-        - "Orders persist customer's current locale from session state for localized display."
-        - "Shopping cart is emptied after successful order creation."
+        - "Each submitted order gets a generated order number and is never lost, even when approval, the supplier or e-mail is unavailable."
+        - "An order stores its own copy of the billing and shipping addresses and card, so later account changes do not rewrite it."
+        - "Each line item keeps the unit price at the time of ordering and tracks quantity shipped separately from quantity ordered."
+        - "The order total is the sum of the line items, and the order records its locale."
+        - "Every order carries exactly one status: Pending, Approved, Denied, Partly shipped or Completed; Denied is terminal and Completed requires every line shipped in full."
       outOfScope:
-        - "Order approval workflow (handled by order-approval capability)"
-        - "Supplier purchase order generation (handled by inventory-fulfillment)"
-        - "Order notifications and messaging (handled by notification-messaging)"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-      screens:
-        - "Order management screen: Display individual order details including order ID, customer info, line items with quantities and costs, order total, and order status."
-    evidence:
-      irRefs: ["ORDM-REQ-0001", "ORDM-REQ-0002", "ORDM-REQ-0003", "ORDM-REQ-0004", "order-management-screen-0001"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Customer order history."
+        - "Returns, refunds or cancellations; an order cannot be changed once submitted."
+        - "Shipment tracking; Completed is the final status."
 
   - slug: notification-messaging
     title: Notification & Messaging
-    order: 6
-    dependsOn: ["order-management"]
-    priority: 0
+    order: 7
+    dependsOn: [order-management]
     change:
-      dir: openspec/changes/sx-notification-messaging
-      specCapabilities:
-        - notification-messaging
+      dir: openspec/changes/swhr4-i-0008-notification-messaging
+      specCapabilities: [notification-messaging]
     canvas:
-      problem: "Order processing workflows require asynchronous email notification delivery to customers without blocking transaction completion, ensuring customer communication without introducing latency into order processing."
-      solution: "Message-driven bean architecture queuing order notifications as XML documents for asynchronous processing and SMTP transmission."
+      problem: "After the confirmation screen the shopper has no view of their order, so e-mail is their only source of status, and a mail outage must not hold up order processing."
+      solution: "Queued customer e-mail on approval, denial, each shipment and completion, sent to the address on the order, where a mail outage delays e-mail but never blocks order processing."
       userStories:
-        - "As the order system, I want to queue customer notifications without blocking order completion, so order processing is fast and responsive."
-        - "As a customer, I want to receive email notification of my order with my order details, so I have a record of my purchase."
+        - "As a shopper, I want an e-mail when my order is approved or denied, so I know whether the store will honour it."
+        - "As a shopper, I want an e-mail for each shipment and when my order is completed, so I know what has been sent without returning to the site."
       acceptanceCriteria:
-        - "Order completion triggers async notification via AsyncSender EJB with purchaseOrder serialized to XML."
-        - "Purchase orders preserve customer email address from billing contact info for post-order notifications."
-        - "Message-driven bean (MailerMDB) processes messages from JMS queue and formats as MIME messages for SMTP transmission."
-        - "Mail entity contains required fields: address, subject, and content; XML is validated against DTD before processing."
+        - "A customer e-mail is queued when an order is approved, when it is denied, on each shipment and on completion."
+        - "E-mail goes to the address shown on the order confirmation."
+        - "A mail outage never blocks or fails order approval, fulfilment or status changes; queued e-mail is sent once mail is available."
+        - "E-mail content follows the order's locale."
       outOfScope:
-        - "SMS or push notification channels; email only"
-        - "Notification template customization or multi-language email composition"
-        - "Delivery retry logic or bounce handling"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-    evidence:
-      irRefs: ["NOTIF-REQ-0001", "NOTIF-REQ-0002"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Channels other than e-mail."
+        - "Shipment tracking links."
 
   - slug: order-approval
     title: Order Approval
-    order: 7
-    dependsOn: ["order-management"]
-    priority: 0
+    order: 8
+    dependsOn: [order-management]
     change:
-      dir: openspec/changes/sx-order-approval
-      specCapabilities:
-        - order-approval
+      dir: openspec/changes/swhr4-i-0009-order-approval
+      specCapabilities: [order-approval]
     canvas:
-      problem: "High-value orders present fraud and policy compliance risk, requiring manual review before fulfillment; low-value orders can proceed automatically to reduce fulfillment latency."
-      solution: "Automatic approval for orders below locale-specific monetary thresholds, manual XML-based approval workflow for high-risk orders."
+      problem: "High-value orders carry real money risk and need a human decision, but review effort must scale with risk rather than order volume."
+      solution: "Automatic approval below a locale-specific order-total threshold; otherwise the order stays Pending until an administrator decision, which releases it to the supplier (Approved) or ends it (Denied)."
       userStories:
-        - "As a merchant, I want orders below risk thresholds to be automatically approved for immediate fulfillment, so fast fulfillment reduces delivery latency."
-        - "As a risk manager, I want high-value orders held for manual review and approval, so fraud and policy violations can be prevented."
-        - "As an administrator, I want to approve or deny orders via the admin system, so fulfillment only proceeds for authorized transactions."
+        - "As a shopper placing an ordinary order, I want it approved automatically, so it ships without waiting for a person."
+        - "As an administrator, I want only high-value orders held for me, so my review effort goes where the risk is."
+        - "As an administrator, I want my decision to release an approved order to the supplier or end a denied one, so the order moves on without further steps."
       acceptanceCriteria:
-        - "Orders are automatically approved during intake if total price is below locale-specific threshold (e.g., < $500 USD, < ¥50000 JPY)."
-        - "Orders above threshold are held in PENDING status pending administrator review and approval."
-        - "Administrators can approve or deny pending orders via XML-based admin interface with order ID and new status."
-        - "Approved orders trigger supplier purchase order generation and customer notification."
-        - "Denied orders are marked as DENIED and no further fulfillment proceeds."
+        - "An en_US order under 500 or a ja_JP order under 50,000 is approved automatically; any other order, including every zh_CN order, is held as Pending."
+        - "Approving a Pending order releases it to the supplier for fulfilment."
+        - "Denying a Pending order ends it; Denied is terminal."
+        - "Only Pending orders can be approved or denied."
+        - "A slow or busy review queue never stops customers from ordering."
       outOfScope:
-        - "Fraud detection algorithms or machine learning models"
-        - "Multiple-level approval workflows or escalation chains"
-        - "Threshold customization per merchant or customer segment"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-    evidence:
-      irRefs: ["AO-REQ-0007", "AO-REQ-0008"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Fraud or credit checks beyond the order-total threshold."
+        - "A configurable rule set considering customer age, destination or item category."
+        - "The administrator review screens (owned by admin-operations)."
 
   - slug: inventory-fulfillment
     title: Inventory & Fulfillment
-    order: 8
-    dependsOn: ["order-approval"]
-    priority: 0
+    order: 9
+    dependsOn: [order-approval]
     change:
-      dir: openspec/changes/sx-inventory-fulfillment
-      specCapabilities:
-        - inventory-fulfillment
+      dir: openspec/changes/swhr4-i-0010-inventory-fulfillment
+      specCapabilities: [inventory-fulfillment]
     canvas:
-      problem: "Suppliers must manage warehouse inventory and fulfill customer orders, supporting partial shipments where some items ship immediately while others remain pending, with automatic retry when new stock arrives."
-      solution: "Supplier-facing inventory management and order fulfillment API with partial order support, web-based inventory views, and message-driven fulfillment retry."
+      problem: "Approved orders must be filled from stock that may not exist yet, automatically and with no one watching the queue, while a slow supplier must never stop customers ordering."
+      solution: "A supplier inventory of record that fills each approved order line from stock with partial shipment, retries waiting orders whenever stock is updated, and sends an invoice back to order processing for what shipped."
       userStories:
-        - "As a supplier, I want to view current inventory levels and update quantities, so I can track stock and record new arrivals."
-        - "As the fulfillment system, I want to automatically fulfill orders when inventory is available, so customers receive shipments without manual intervention."
-        - "As a supplier, I want pending orders to be automatically retried when new stock arrives, so fulfillment is maximized without manual re-triggering."
+        - "As a shopper, I want what is in stock shipped now when only part of my order can be filled, so I am not waiting on the whole order."
+        - "As an administrator, I want approved orders completed automatically once stock exists, so nobody has to watch the queue."
+        - "As supplier staff, I want a stock update to release orders that were waiting on it, so restocking drives fulfilment."
       acceptanceCriteria:
-        - "Suppliers can view inventory by item with current quantity levels."
-        - "Suppliers can update inventory quantities for multiple items atomically in a single transaction."
-        - "Order fulfillment checks inventory and ships available items, marking others as PENDING with partial shipment support."
-        - "Message-driven bean automatically retries fulfillment of pending orders when new inventory arrives (SupplierOrderMDB)."
-        - "Fulfilled orders generate invoices in XML format for transmission to Order Processing Center."
+        - "An approved order has each line filled from recorded inventory, and inventory is decremented by the quantity shipped."
+        - "When only some lines or quantities can be filled, what is in stock ships and the order becomes Partly shipped."
+        - "An order becomes Completed only when every line has shipped in full."
+        - "Committing an inventory update retries every order waiting on stock."
+        - "Each shipment produces an invoice back to order processing for what shipped, which updates quantity shipped and status."
+        - "A slow or unavailable supplier delays fulfilment but never blocks ordering or loses an order."
+        - "The supplier receives the shipping details needed to ship an order."
       outOfScope:
-        - "Advanced inventory forecasting or demand planning"
-        - "Multi-warehouse or distributed inventory management"
-        - "Backorder or drop-shipping workflows"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
-      screens:
-        - "Supplier inventory screen: Display current inventory levels for each item with ability to view quantities and update stock."
-        - "Order fulfillment screen: Display pending orders with items available in stock and pending items waiting for inventory."
-        - "Inventory transaction screen: View history of inventory updates and fulfillment actions with timestamps and quantities."
-    evidence:
-      irRefs: ["SI-SCREEN-0008", "SI-SCREEN-0009", "SI-SCREEN-0010"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Multiple suppliers or sourcing decisions."
+        - "Stock reservation at order time."
+        - "Reconciling recorded inventory against physical stock."
+        - "The supplier sign-in and inventory screen (owned by supplier-integration)."
 
   - slug: admin-operations
     title: Admin Operations
-    order: 9
-    dependsOn: []
-    priority: 0
+    order: 10
+    dependsOn: [order-approval]
     change:
-      dir: openspec/changes/sx-admin-operations
-      specCapabilities:
-        - admin-operations
+      dir: openspec/changes/swhr4-i-0011-admin-operations
+      specCapabilities: [admin-operations]
     canvas:
-      problem: "System administrators require authenticated web and rich client interfaces to manage orders, approve/deny pending transactions, and view sales analytics for operational decision-making."
-      solution: "Form-based admin authentication with web-based controls for order approval and desktop rich client for order management and sales analytics visualization."
+      problem: "Administrators review held orders in batches and are the only role with a view of trading performance, and they need both in the browser behind their own sign-in."
+      solution: "An authenticated browser-based administrator area with order review queues (batch approve or deny, committed together) and sales charts by category over a date range."
       userStories:
-        - "As an admin, I want to log in securely and access order management controls, so I can review and approve/deny pending orders."
-        - "As an admin, I want to view sales analytics with revenue and order volume by category and date range, so I can monitor business performance."
-        - "As an admin, I want access to a desktop-based rich client via Java Web Start, so I can work offline and manage large datasets efficiently."
+        - "As an administrator, I want to stage approve or deny decisions on several pending orders and commit them together, so I can work in batches."
+        - "As an administrator, I want to see non-pending orders read-only, so I can check what has already been decided."
+        - "As an administrator, I want revenue share and units ordered by pet category over a chosen period, so I can see what is selling."
       acceptanceCriteria:
-        - "Admin authentication via form-based login with username/password to j_security_check endpoint requiring 'administrator' role."
-        - "Sessions expire after 54 minutes of inactivity."
-        - "Welcome screen provides 'Launch Rich Client' (Java Web Start JNLP) and 'logout' actions."
-        - "Rich client displays tabbed interface with Orders tab (view orders by status) and Sales analytics tabs (bar and pie charts)."
-        - "XML-based order retrieval filtered by status (PENDING, APPROVED, DENIED, COMPLETED, SHIPPED_PART)."
-        - "XML-based order status updates (approve/deny) forwarded to AsyncSender EJB for asynchronous processing."
+        - "Every administration screen requires administrator sign-in, a failed sign-in shows an error, and the session expires after 54 minutes idle."
+        - "Process pending orders lets each pending order be set to Approved or Denied, and all decisions are sent together on Commit."
+        - "View non-pending orders is read-only and includes Partly shipped orders."
+        - "Both tabs show order number, customer, date, amount and status, sortable by any column; data loads on Refresh, and refreshing with uncommitted decisions asks for confirmation."
+        - "Sales reporting fetches for a start and end date and shows a pie chart of each category's share of revenue and a bar chart of quantity per category; an unreadable date is reported and nothing is fetched."
+        - "An administrator cannot edit orders, customers or the catalogue."
       outOfScope:
-        - "User/role management or permission configuration"
-        - "Audit logging or compliance reporting"
-        - "Multiple admin levels or approval hierarchies"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
+        - "A Java Web Start or other desktop client."
+        - "Editing orders, customers or the catalogue."
+        - "Supplier inventory screens."
       screens:
-        - "Admin login screen: Accept username and password input with form fields named j_username and j_password, display login errors when authentication fails."
-        - "Admin welcome screen: After successful authentication, display two primary actions: 'Launch Rich Client' to access the admin client application, and 'logout' to end the session."
-        - "Admin rich client orders tab: Display Orders tab with ability to view orders by status and Approve/Deny tab for administrators to change pending order statuses."
-        - "Admin rich client sales tab: Display Sales tab with bar and pie charts for visualizing order quantity and revenue analytics by category over a selected date range."
-    evidence:
-      irRefs: ["AO-REQ-0001", "AO-REQ-0002", "AO-REQ-0005", "AO-REQ-0006", "AO-REQ-0009", "AO-REQ-0010", "AO-SCREEN-0003", "AO-SCREEN-0004", "AO-SCREEN-0015", "AO-SCREEN-0016", "ADMIN-RICKCLIENT-UI-0001"]
-      reviewedBy: null
-      reviewedAt: null
+        - "Admin sign in: user name and password, with an error on failure."
+        - "Admin welcome: entry to order review and sales reporting, and sign-out."
+        - "Admin — order review: a Process pending orders tab, where each pending order is set to Approved or Denied and all decisions are sent together on Commit, and a read-only View non-pending orders tab. Both tabs show order number, customer, date, amount and status, sortable by any column. Data is loaded on Refresh, and refreshing with uncommitted decisions asks for confirmation."
+        - "Admin — sales reporting: start and end date with a fetch action, a pie chart of each category's share of revenue and a bar chart of quantity per category. An unreadable date is reported and nothing is fetched."
 
   - slug: supplier-integration
     title: Supplier Integration
-    order: 10
-    dependsOn: ["inventory-fulfillment"]
-    priority: 0
+    order: 11
+    dependsOn: [inventory-fulfillment]
     change:
-      dir: openspec/changes/sx-supplier-integration
-      specCapabilities:
-        - supplier-integration
+      dir: openspec/changes/swhr4-i-0012-supplier-integration
+      specCapabilities: [supplier-integration]
     canvas:
-      problem: "Suppliers require B2B integration to securely authenticate, manage their inventory, fulfill orders placed by the e-commerce system, and receive transaction records."
-      solution: "Form-based supplier authentication with web interface for inventory management and order fulfillment tracking."
+      problem: "Supplier staff keep recorded stock matching real stock, and their updates release orders that could not be filled before, so they need a simple, authenticated way to update quantities."
+      solution: "An authenticated supplier area where staff view inventory and replace quantities for the rows they flag, with each commit triggering fulfilment of waiting orders."
       userStories:
-        - "As a supplier, I want to log in securely to my supplier portal, so I can access my inventory and order data."
-        - "As a supplier, I want to view and update my inventory levels, so I can keep my stock information current."
-        - "As a supplier, I want to see pending orders and track their fulfillment status, so I can manage my fulfillment workflow."
+        - "As supplier staff, I want to see every item with its current quantity, so I can compare recorded stock with real stock."
+        - "As supplier staff, I want to update only the rows I flag and submit them once, so I can restock several items together."
+        - "As supplier staff, I want my submit to release orders waiting on stock, so restocking gets orders shipped."
       acceptanceCriteria:
-        - "Supplier authentication via form-based login with username/password, 54-minute session timeout."
-        - "Suppliers can view current inventory levels for items supplied."
-        - "Suppliers can update inventory quantities, triggering automatic retry of pending orders when new stock becomes available."
-        - "Suppliers receive invoice XML records for completed shipments with order ID, items shipped, and fulfillment status."
-        - "Supplier sessions enforce 54-minute inactivity timeout with logout endpoint."
+        - "Every supplier screen requires supplier sign-in with a role separate from the administrator role, a failed sign-in shows an error, and the session expires after 54 minutes idle."
+        - "The inventory screen lists every item with its current quantity, a new-quantity field and an Update flag per row, and one Submit."
+        - "On Submit only flagged rows are saved, and an entered quantity replaces the stored figure."
+        - "Each Submit triggers fulfilment of orders waiting on stock and returns to Supplier home."
+        - "Supplier staff have no view of orders or customer accounts."
       outOfScope:
-        - "Multi-tier supplier hierarchy or regional supplier management"
-        - "Pricing negotiation or contract management"
-        - "EDI or advanced B2B protocols; HTTP/XML only"
-      risksAssumptions: []
-      techStack: []
-      affectedCode: []
+        - "Multiple suppliers."
+        - "Feedback on which orders an inventory commit released."
+        - "Reconciling recorded inventory against physical stock."
       screens:
-        - "Supplier login screen: Accept form-based login for supplier authentication with appropriate error handling and session management."
-    evidence:
-      irRefs: ["SUPP-SCREEN-LOGIN-0001"]
-      reviewedBy: null
-      reviewedAt: null
-
-artifacts:
-  openapi: api/openapi.yaml
-  erd: architecture/erd.mermaid
-  schema: architecture/schema.sql
-  agents: architecture/rebuild-guidance.md
+        - "Supplier sign in: user name and password, with an error on failure."
+        - "Supplier home: purpose of the area, Display inventory and sign-out."
+        - "Supplier — inventory: every item with its current quantity, a new-quantity field and an Update flag per row, and one Submit. Only flagged rows are saved, and an entered quantity replaces the stored figure."
