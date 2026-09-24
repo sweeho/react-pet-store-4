@@ -1,0 +1,378 @@
+schemaVersion: 1
+program:
+  key: petstore-legacy-extraction
+  title: PetStore Legacy Application Specification Extraction
+  source: extraction
+  generator: vortex-spec-extraction
+  sourceRef: vortex/legacy-spec/sx-0001
+capabilities:
+  - slug: product-catalog
+    title: Product Catalog
+    order: 1
+    dependsOn: []
+    priority: 0
+    change:
+      dir: openspec/changes/sx-product-catalog
+      specCapabilities:
+        - product-catalog
+    canvas:
+      problem: "E-commerce systems must provide customers with the ability to browse and search products efficiently across categories and locales, with support for pagination and full-text search."
+      solution: "A hierarchical, locale-aware product catalog service providing read-only access to product data organized by categories, products, and SKUs with pagination and keyword search."
+      userStories:
+        - "As a customer, I want to browse product categories localized to my preferred language, so I can find products relevant to my locale."
+        - "As a customer, I want to search products by keyword and see results with pagination, so I can find items without browsing the full catalog."
+        - "As a customer, I want to view detailed product information including item attributes and prices, so I can make informed purchase decisions."
+      acceptanceCriteria:
+        - "Catalog displays categories and products localized for en_US, ja_JP, and zh_CN, sorted alphabetically by name."
+        - "Search results show matching items with pagination (configurable page size, default 2 items) and Previous/Next navigation."
+        - "Item details include itemId, category, product name, description, unit cost formatted as currency, and item attributes."
+        - "All operations are read-only and stateless; catalog provides unchecked (public) access without authentication."
+      outOfScope:
+        - "Product catalog administration (add, modify, delete operations)"
+        - "Role-based access control or authentication"
+        - "Search result ranking, relevance scoring, or faceted search"
+        - "Server-side caching policy or cache invalidation"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Category listing screen: Display list of available product categories with names and descriptions, localized for user's preferred language."
+        - "Search results screen: Display items matching search keywords with pagination, showing no-results message when search yields no items."
+        - "Product catalog screen: Display hierarchical product browsing with categories, products, and items including pagination controls."
+    evidence:
+      irRefs: ["PROD-REQ-0001", "PROD-REQ-0002", "PROD-REQ-0003", "PROD-REQ-0004", "SCREEN-0001", "SCREEN-0005", "product-catalog-screen-0001"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: customer-account
+    title: Customer Account
+    order: 2
+    dependsOn: []
+    priority: 0
+    change:
+      dir: openspec/changes/sx-customer-account
+      specCapabilities:
+        - customer-account
+    canvas:
+      problem: "E-commerce systems require customer authentication, account creation, profile management, and preference storage to personalize the shopping experience and enable order tracking."
+      solution: "Customer account lifecycle management with form-based authentication, account registration, contact/billing information storage, and user profile preferences for locale and display options."
+      userStories:
+        - "As a new customer, I want to create an account with username and password, so I can place orders and track my purchases."
+        - "As an existing customer, I want to sign in with my credentials, so I can access my account and shopping history."
+        - "As a customer, I want my account to remember my preferred language and category interests, so the site is personalized to my preferences."
+      acceptanceCriteria:
+        - "Sign-on screen provides dual options: existing customer login and new account creation, each with appropriate form fields and validation."
+        - "Account creation requires username and password confirmation; duplicate usernames are rejected with DuplicateAccountException."
+        - "Sign-on uses j_signon_check endpoint with standard J2EE form-based authentication (j_username, j_password parameters)."
+        - "Customer profiles store preferred language, favorite category, MyList preference, and banner preference; locale is derived from preferred language."
+        - "Sessions expire after 15 minutes of inactivity per session-config."
+        - "Optionally remember username in bp_signon cookie for future sign-in convenience."
+      outOfScope:
+        - "Password reset or account recovery workflows"
+        - "Two-factor authentication or biometric sign-in"
+        - "Account deletion or data export"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Sign-on screen: Provide dual options for existing customers (sign in) and new customers (create account) with appropriate form fields and validation."
+        - "Customer account details: Display and allow editing of customer contact information, addresses, and profile preferences."
+        - "Customer profile preferences: Edit preferred language, favorite category, MyList preference, and banner preference."
+        - "Account information display: Show customer account status, registered contact information, and saved addresses."
+        - "Customer contact information form: Edit customer name, email, and address details."
+    evidence:
+      irRefs: ["CUST-REQ-0001", "CUST-REQ-0002", "CUST-REQ-0003", "CUST-REQ-0004", "CUST-REQ-0005", "CUST-REQ-0006", "CUST-REQ-0007", "CUST-REQ-0008", "SIGNON-REQ-0001", "CUST-AUTH-0012", "CUST-AUTH-0013", "SCREEN-0004", "cust-screen-0001", "cust-screen-0002", "cust-screen-0003"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: shopping-cart
+    title: Shopping Cart
+    order: 3
+    dependsOn: ["product-catalog"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-shopping-cart
+      specCapabilities:
+        - shopping-cart
+    canvas:
+      problem: "Customers need to collect and manage items across a browsing session without committing to immediate purchase, with flexible quantity management and cost visibility."
+      solution: "A session-based shopping cart service that enables customers to add, remove, and update item quantities with real-time subtotal calculation in the selected locale."
+      userStories:
+        - "As a customer, I want to add products to my cart and update quantities, so I can prepare a flexible purchase order."
+        - "As a customer, I want to remove items from my cart, so I can refine my selection before checkout."
+        - "As a customer, I want to see my cart subtotal in my preferred currency, so I can understand the cost of my intended purchase."
+      acceptanceCriteria:
+        - "Cart supports atomic add-item operations with default quantity of 1."
+        - "Cart supports removing items by itemId and updating quantities for multiple items atomically in a single transaction."
+        - "Cart calculates subtotal by summing unit cost × quantity for each line item and displays in user's preferred currency."
+        - "Cart can be emptied, removing all items and resetting state for new shopping session."
+        - "Cart items display product name, quantity input field, unit cost, and calculated line total."
+      outOfScope:
+        - "Pricing calculations beyond unit cost × quantity (discounts, surcharges, tax)"
+        - "Cart persistence across sessions; cart is session-scoped"
+        - "Inventory reservation or hold logic"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+    evidence:
+      irRefs: ["CART-REQ-0001", "CART-REQ-0002", "CART-REQ-0003", "CART-REQ-0004", "CART-REQ-0005"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: checkout-payment
+    title: Checkout & Payment
+    order: 4
+    dependsOn: ["shopping-cart", "customer-account"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-checkout-payment
+      specCapabilities:
+        - checkout-payment
+    canvas:
+      problem: "Order placement requires collection of billing address, shipping address, and payment card information with validation and persistence for order processing."
+      solution: "Order checkout workflow collecting and validating customer contact and payment details, creating a purchase order with line items and computing total price."
+      userStories:
+        - "As a customer, I want to enter billing and shipping address information during checkout, so the order can be shipped and invoiced correctly."
+        - "As a customer, I want to provide credit card information for payment, so the transaction can be processed."
+        - "As a system, I want to validate the cart contains items before allowing order placement, so orders are never created for empty carts."
+      acceptanceCriteria:
+        - "Order placement requires non-empty shopping cart; orders with empty carts raise ShoppingCartEmptyOrderException and are rejected."
+        - "Billing information collection includes first name and last name."
+        - "Shipping address collection includes street address, city, state, ZIP code, and country."
+        - "Credit card information collection includes card number, card type (Visa, MasterCard, etc.), and expiration date (MM/YYYY format)."
+        - "Order form posts to order.do endpoint and redirects to order confirmation screen on success."
+      outOfScope:
+        - "Actual credit card authorization or payment processing against payment networks"
+        - "Address validation against postal databases"
+        - "Fraud detection or risk assessment (handled by order-approval capability)"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Order entry screen: Collect billing and shipping address information, credit card details, and display order summary for confirmation before placement."
+    evidence:
+      irRefs: ["CKPT-REQ-0001", "CKPT-REQ-0002", "CKPT-REQ-0003", "CKPT-REQ-0004", "SCREEN-0003"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: order-management
+    title: Order Management
+    order: 5
+    dependsOn: ["checkout-payment"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-order-management
+      specCapabilities:
+        - order-management
+    canvas:
+      problem: "The order processing system requires persistent storage of purchase orders with unique identifiers, line items, customer contact/billing information, and order status tracking."
+      solution: "Order persistence and lifecycle management with unique order ID generation, line item tracking, and status-based fulfillment coordination."
+      userStories:
+        - "As the system, I want to create and persist purchase orders with unique IDs and complete customer/payment information, so orders can be tracked and fulfilled."
+        - "As a customer, I want to see my order with all line items, costs, and totals, so I can verify my purchase."
+        - "As a fulfillment system, I want to query orders by status and track line item fulfillment, so inventory and shipping operations can proceed."
+      acceptanceCriteria:
+        - "Orders have unique sequential IDs generated by UniqueIdGenerator with seed '1001'."
+        - "Orders store orderId, userId, orderDate (timestamp), billing info (ContactInfo), shipping info (ContactInfo), credit card, and line items with partial shipment support."
+        - "Order total price is calculated as sum of (unit cost × quantity) for each line item."
+        - "Orders persist customer's current locale from session state for localized display."
+        - "Shopping cart is emptied after successful order creation."
+      outOfScope:
+        - "Order approval workflow (handled by order-approval capability)"
+        - "Supplier purchase order generation (handled by inventory-fulfillment)"
+        - "Order notifications and messaging (handled by notification-messaging)"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Order management screen: Display individual order details including order ID, customer info, line items with quantities and costs, order total, and order status."
+    evidence:
+      irRefs: ["ORDM-REQ-0001", "ORDM-REQ-0002", "ORDM-REQ-0003", "ORDM-REQ-0004", "order-management-screen-0001"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: notification-messaging
+    title: Notification & Messaging
+    order: 6
+    dependsOn: ["order-management"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-notification-messaging
+      specCapabilities:
+        - notification-messaging
+    canvas:
+      problem: "Order processing workflows require asynchronous email notification delivery to customers without blocking transaction completion, ensuring customer communication without introducing latency into order processing."
+      solution: "Message-driven bean architecture queuing order notifications as XML documents for asynchronous processing and SMTP transmission."
+      userStories:
+        - "As the order system, I want to queue customer notifications without blocking order completion, so order processing is fast and responsive."
+        - "As a customer, I want to receive email notification of my order with my order details, so I have a record of my purchase."
+      acceptanceCriteria:
+        - "Order completion triggers async notification via AsyncSender EJB with purchaseOrder serialized to XML."
+        - "Purchase orders preserve customer email address from billing contact info for post-order notifications."
+        - "Message-driven bean (MailerMDB) processes messages from JMS queue and formats as MIME messages for SMTP transmission."
+        - "Mail entity contains required fields: address, subject, and content; XML is validated against DTD before processing."
+      outOfScope:
+        - "SMS or push notification channels; email only"
+        - "Notification template customization or multi-language email composition"
+        - "Delivery retry logic or bounce handling"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+    evidence:
+      irRefs: ["NOTIF-REQ-0001", "NOTIF-REQ-0002"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: order-approval
+    title: Order Approval
+    order: 7
+    dependsOn: ["order-management"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-order-approval
+      specCapabilities:
+        - order-approval
+    canvas:
+      problem: "High-value orders present fraud and policy compliance risk, requiring manual review before fulfillment; low-value orders can proceed automatically to reduce fulfillment latency."
+      solution: "Automatic approval for orders below locale-specific monetary thresholds, manual XML-based approval workflow for high-risk orders."
+      userStories:
+        - "As a merchant, I want orders below risk thresholds to be automatically approved for immediate fulfillment, so fast fulfillment reduces delivery latency."
+        - "As a risk manager, I want high-value orders held for manual review and approval, so fraud and policy violations can be prevented."
+        - "As an administrator, I want to approve or deny orders via the admin system, so fulfillment only proceeds for authorized transactions."
+      acceptanceCriteria:
+        - "Orders are automatically approved during intake if total price is below locale-specific threshold (e.g., < $500 USD, < ¥50000 JPY)."
+        - "Orders above threshold are held in PENDING status pending administrator review and approval."
+        - "Administrators can approve or deny pending orders via XML-based admin interface with order ID and new status."
+        - "Approved orders trigger supplier purchase order generation and customer notification."
+        - "Denied orders are marked as DENIED and no further fulfillment proceeds."
+      outOfScope:
+        - "Fraud detection algorithms or machine learning models"
+        - "Multiple-level approval workflows or escalation chains"
+        - "Threshold customization per merchant or customer segment"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+    evidence:
+      irRefs: ["AO-REQ-0007", "AO-REQ-0008"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: inventory-fulfillment
+    title: Inventory & Fulfillment
+    order: 8
+    dependsOn: ["order-approval"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-inventory-fulfillment
+      specCapabilities:
+        - inventory-fulfillment
+    canvas:
+      problem: "Suppliers must manage warehouse inventory and fulfill customer orders, supporting partial shipments where some items ship immediately while others remain pending, with automatic retry when new stock arrives."
+      solution: "Supplier-facing inventory management and order fulfillment API with partial order support, web-based inventory views, and message-driven fulfillment retry."
+      userStories:
+        - "As a supplier, I want to view current inventory levels and update quantities, so I can track stock and record new arrivals."
+        - "As the fulfillment system, I want to automatically fulfill orders when inventory is available, so customers receive shipments without manual intervention."
+        - "As a supplier, I want pending orders to be automatically retried when new stock arrives, so fulfillment is maximized without manual re-triggering."
+      acceptanceCriteria:
+        - "Suppliers can view inventory by item with current quantity levels."
+        - "Suppliers can update inventory quantities for multiple items atomically in a single transaction."
+        - "Order fulfillment checks inventory and ships available items, marking others as PENDING with partial shipment support."
+        - "Message-driven bean automatically retries fulfillment of pending orders when new inventory arrives (SupplierOrderMDB)."
+        - "Fulfilled orders generate invoices in XML format for transmission to Order Processing Center."
+      outOfScope:
+        - "Advanced inventory forecasting or demand planning"
+        - "Multi-warehouse or distributed inventory management"
+        - "Backorder or drop-shipping workflows"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Supplier inventory screen: Display current inventory levels for each item with ability to view quantities and update stock."
+        - "Order fulfillment screen: Display pending orders with items available in stock and pending items waiting for inventory."
+        - "Inventory transaction screen: View history of inventory updates and fulfillment actions with timestamps and quantities."
+    evidence:
+      irRefs: ["SI-SCREEN-0008", "SI-SCREEN-0009", "SI-SCREEN-0010"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: admin-operations
+    title: Admin Operations
+    order: 9
+    dependsOn: []
+    priority: 0
+    change:
+      dir: openspec/changes/sx-admin-operations
+      specCapabilities:
+        - admin-operations
+    canvas:
+      problem: "System administrators require authenticated web and rich client interfaces to manage orders, approve/deny pending transactions, and view sales analytics for operational decision-making."
+      solution: "Form-based admin authentication with web-based controls for order approval and desktop rich client for order management and sales analytics visualization."
+      userStories:
+        - "As an admin, I want to log in securely and access order management controls, so I can review and approve/deny pending orders."
+        - "As an admin, I want to view sales analytics with revenue and order volume by category and date range, so I can monitor business performance."
+        - "As an admin, I want access to a desktop-based rich client via Java Web Start, so I can work offline and manage large datasets efficiently."
+      acceptanceCriteria:
+        - "Admin authentication via form-based login with username/password to j_security_check endpoint requiring 'administrator' role."
+        - "Sessions expire after 54 minutes of inactivity."
+        - "Welcome screen provides 'Launch Rich Client' (Java Web Start JNLP) and 'logout' actions."
+        - "Rich client displays tabbed interface with Orders tab (view orders by status) and Sales analytics tabs (bar and pie charts)."
+        - "XML-based order retrieval filtered by status (PENDING, APPROVED, DENIED, COMPLETED, SHIPPED_PART)."
+        - "XML-based order status updates (approve/deny) forwarded to AsyncSender EJB for asynchronous processing."
+      outOfScope:
+        - "User/role management or permission configuration"
+        - "Audit logging or compliance reporting"
+        - "Multiple admin levels or approval hierarchies"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Admin login screen: Accept username and password input with form fields named j_username and j_password, display login errors when authentication fails."
+        - "Admin welcome screen: After successful authentication, display two primary actions: 'Launch Rich Client' to access the admin client application, and 'logout' to end the session."
+        - "Admin rich client orders tab: Display Orders tab with ability to view orders by status and Approve/Deny tab for administrators to change pending order statuses."
+        - "Admin rich client sales tab: Display Sales tab with bar and pie charts for visualizing order quantity and revenue analytics by category over a selected date range."
+    evidence:
+      irRefs: ["AO-REQ-0001", "AO-REQ-0002", "AO-REQ-0005", "AO-REQ-0006", "AO-REQ-0009", "AO-REQ-0010", "AO-SCREEN-0003", "AO-SCREEN-0004", "AO-SCREEN-0015", "AO-SCREEN-0016", "ADMIN-RICKCLIENT-UI-0001"]
+      reviewedBy: null
+      reviewedAt: null
+
+  - slug: supplier-integration
+    title: Supplier Integration
+    order: 10
+    dependsOn: ["inventory-fulfillment"]
+    priority: 0
+    change:
+      dir: openspec/changes/sx-supplier-integration
+      specCapabilities:
+        - supplier-integration
+    canvas:
+      problem: "Suppliers require B2B integration to securely authenticate, manage their inventory, fulfill orders placed by the e-commerce system, and receive transaction records."
+      solution: "Form-based supplier authentication with web interface for inventory management and order fulfillment tracking."
+      userStories:
+        - "As a supplier, I want to log in securely to my supplier portal, so I can access my inventory and order data."
+        - "As a supplier, I want to view and update my inventory levels, so I can keep my stock information current."
+        - "As a supplier, I want to see pending orders and track their fulfillment status, so I can manage my fulfillment workflow."
+      acceptanceCriteria:
+        - "Supplier authentication via form-based login with username/password, 54-minute session timeout."
+        - "Suppliers can view current inventory levels for items supplied."
+        - "Suppliers can update inventory quantities, triggering automatic retry of pending orders when new stock becomes available."
+        - "Suppliers receive invoice XML records for completed shipments with order ID, items shipped, and fulfillment status."
+        - "Supplier sessions enforce 54-minute inactivity timeout with logout endpoint."
+      outOfScope:
+        - "Multi-tier supplier hierarchy or regional supplier management"
+        - "Pricing negotiation or contract management"
+        - "EDI or advanced B2B protocols; HTTP/XML only"
+      risksAssumptions: []
+      techStack: []
+      affectedCode: []
+      screens:
+        - "Supplier login screen: Accept form-based login for supplier authentication with appropriate error handling and session management."
+    evidence:
+      irRefs: ["SUPP-SCREEN-LOGIN-0001"]
+      reviewedBy: null
+      reviewedAt: null
+
+artifacts:
+  openapi: api/openapi.yaml
+  erd: architecture/erd.mermaid
+  schema: architecture/schema.sql
+  agents: architecture/rebuild-guidance.md
