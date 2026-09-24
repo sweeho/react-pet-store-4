@@ -1,0 +1,13 @@
+divergences:
+  - claim: The $50,000 threshold in the code has no behavior attached
+    code_says: |
+      PurchaseOrderMDB.java checks: "if (purchaseOrder.getTotalPrice() < 500) return true; if (purchaseOrder.getTotalPrice() < 50000) return true;"
+      The second threshold exists but has no distinct behavior — both code paths return true, indicating automatic approval.
+    document_says: |
+      PRD notes: "A second threshold at $50,000 exists in the code but has no behaviour attached beyond the first, so all review effectively happens at one level."
+    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/PurchaseOrderMDB.java
+    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#p214-p218
+    capability: order-approval
+    severity: minor
+    notes: |
+      This is not a functional divergence — both code and documentation describe the same behavior (only $500 threshold is functional). The $50,000 check appears to be dead code or vestigial from an earlier design. No behavior change required.
