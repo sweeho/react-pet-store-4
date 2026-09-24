@@ -1,0 +1,369 @@
+records:
+  - record_key: CCARD-VALIDATION-0001
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL enforce non-empty validation for credit card number, type, expiry month,
+      and expiry year fields. Each field SHALL be required and not accept blank or empty values
+      during customer account creation and update operations.
+    confidence: high
+    confidence_basis: >
+      CustomerHTMLAction.extractCreditCard() (lines 140-179) validates that each field is
+      non-empty by checking creditCardNumber.equals(""), creditCardType.equals(""),
+      creditCardExpiryMonth.equals(""), and creditCardExpiryYear.equals(""). Missing fields
+      are accumulated in a missingFields ArrayList and raise MissingFormDataException (line 246).
+      These validation checks are enforced consistently for both customer create and update
+      operations (lines 94-104), confirming high-confidence requirement.
+    risk_class: operational
+    basis: >
+      Validation logic in CustomerHTMLAction.extractCreditCard() (lines 143-174) shows explicit
+      checks for empty/blank values on all four credit card fields. The system rejects the
+      submission if any field is empty via MissingFormDataException.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CustomerHTMLAction.java
+        line_start: 140
+        line_end: 179
+        excerpt: |
+          private CreditCard extractCreditCard(HttpServletRequest request)
+            throws HTMLActionException {
+            ArrayList missingFields = null;
+            String creditCardNumber =  request.getParameter("credit_card_number").trim();
+            if (creditCardNumber.equals("")) {
+              if (missingFields == null) {
+                missingFields = new ArrayList();
+              }
+              // this need to be internationalized
+              missingFields.add("Credit Card");
+            }
+            String creditCardType =  request.getParameter("credit_card_type").trim();
+            if (creditCardNumber.equals("")) {
+              if (missingFields == null) {
+                missingFields = new ArrayList();
+              }
+              // this need to be internationalized
+              missingFields.add("Credit Card Type");
+            }
+            String creditCardExpiryMonth =  request.getParameter("credit_card_expiry_month").trim();
+            if (creditCardNumber.equals("")) {
+              if (missingFields == null) {
+                missingFields = new ArrayList();
+              }
+              // this need to be internationalized
+              missingFields.add("Credit Card Expiry Month");
+            }
+            String creditCardExpiryYear =  request.getParameter("credit_card_expiry_year").trim();
+            if (creditCardNumber.equals("")) {
+              if (missingFields == null) {
+                missingFields = new ArrayList();
+              }
+              // this need to be internationalized
+              missingFields.add("Credit Card Expiry Month");
+            }
+            String expiryDate = creditCardExpiryMonth + "/" + creditCardExpiryYear;
+            return new CreditCard(creditCardNumber,
+                                            creditCardType,
+                                            expiryDate);
+          }
+
+  - record_key: CCARD-CARDTYPE-VALUES-0001
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL support exactly three credit card types: Java(TM) Card, Duke Express,
+      and Meow Card. These card type values are presented as a selection dropdown to users
+      during account setup and profile editing.
+    confidence: high
+    confidence_basis: >
+      edit_customer.jsp lines 227-233 define a select element with three waf:option values
+      for "credit_card_type": Java(TM) Card, Duke Express, and Meow Card. These are the only
+      card type options presented to users, and the form input name is bound to CreditCard.cardType
+      via extractCreditCard() at line 151. No other card types are referenced in the codebase.
+    risk_class: operational
+    basis: >
+      The form presentation in edit_customer.jsp restricts card type selection to three
+      predefined values. The controller extracts and passes this value directly to CreditCard
+      constructor without transformation or additional validation.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/edit_customer.jsp
+        line_start: 223
+        line_end: 234
+        excerpt: |
+          <tr>
+           <td class="petstore_form" align="right">
+            <b>Card Type</b>
+           </td>
+           <td class="petstore_form" align="left" colspan="2">
+            <waf:select size="1"
+                              name="credit_card_type">
+             <waf:selected><c:out value="${customer.account.creditCard.cardType}"/></waf:selected>
+             <waf:option value="Java(TM) Card" />
+             <waf:option value="Duke Express" />
+             <waf:option value="Meow Card" />
+            </waf:select>
+
+  - record_key: CCARD-CARDNUMBER-LENGTH-0001
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL restrict the credit card number input field to a maximum length of 30
+      characters at the HTML form level.
+    confidence: medium
+    confidence_basis: >
+      edit_customer.jsp line 216 defines the credit_card_number input with maxlength="30".
+      This is a client-side constraint enforced by the HTML form element. No server-side
+      validation of card number length is evident in CustomerHTMLAction. The maxlength attribute
+      is a UI-level constraint with medium confidence because it does not guarantee server-side
+      enforcement, and validation.xml or ejb-jar.xml declare no length constraints.
+    risk_class: operational
+    basis: >
+      HTML form maxlength attribute in the card number input field. No corresponding
+      server-side length validation found in CustomerHTMLAction or CreditCard entity.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/edit_customer.jsp
+        line_start: 207
+        line_end: 221
+        excerpt: |
+          <tr>
+           <td class="petstore_form" align="right">
+            <b>Card Number</b>
+           </td>
+           <td align="left" colspan="2">
+            <waf:input cssClass="petstore_form"
+                                              type="text"
+                                              name="credit_card_number"
+                                               size="30"
+                                    maxlength="30"
+                                      validation="validation">
+             <waf:value><c:out value="${customer.account.creditCard.cardNumber}"/></waf:value>
+            </waf:input>
+           </td>
+          </tr>
+
+  - record_key: CCARD-EXPIRYDATE-FORMAT-0001
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL store and format credit card expiry date as a string in MM/YYYY format,
+      where MM is a two-digit month (01-12) and YYYY is a four-digit year. The month and year
+      components are captured separately in the form as credit_card_expiry_month and
+      credit_card_expiry_year, then concatenated with a "/" delimiter.
+    confidence: high
+    confidence_basis: >
+      CustomerHTMLAction line 175 explicitly concatenates month and year:
+      String expiryDate = creditCardExpiryMonth + "/" + creditCardExpiryYear.
+      edit_customer.jsp lines 240-264 show separate dropdown selections for month (01-12)
+      and year (2002-2005), confirming the two-component structure. CreditCardEJB getExpiryMonth()
+      and getExpiryYear() parse this format by indexOf("/"), confirming the "/" delimiter is
+      the canonical format (lines 92, 102).
+    risk_class: financial
+    basis: >
+      Form design separates month and year into two input fields (dropdowns in edit_customer.jsp).
+      Controller concatenates them with "/" (CustomerHTMLAction line 175). Entity parsing assumes
+      "/" delimiter exists (CreditCardEJB lines 92, 102). All three layers agree on MM/YYYY format.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/edit_customer.jsp
+        line_start: 236
+        line_end: 266
+        excerpt: |
+          <tr>
+           <td class="petstore_form" align="right">
+            <b>Card Expiry Date</b>
+           </td>
+           <td class="petstore_form" align="left" colspan="2">
+            <waf:select size="1"
+                              name="credit_card_expiry_month">
+             <waf:selected><c:out value="${customer.account.creditCard.expiryMonth}"/></waf:selected>
+             <waf:option value="01" />
+             <waf:option value="02" />
+             <waf:option value="03" />
+             <waf:option value="04" />
+             <waf:option value="05" />
+             <waf:option value="06" />
+             <waf:option value="07" />
+             <waf:option value="08" />
+             <waf:option value="09" />
+             <waf:option value="10" />
+             <waf:option value="11" />
+             <waf:option value="12" />
+            </waf:select>
+            /
+            <waf:select size="1"
+                              name="credit_card_expiry_year">
+             <waf:selected><c:out value="${customer.account.creditCard.expiryYear}"/></waf:selected>
+             <waf:option value="2002" />
+             <waf:option value="2003" />
+             <waf:option value="2004" />
+             <waf:option value="2005" />
+            </waf:select>
+           </td>
+          </tr>
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CustomerHTMLAction.java
+        line_start: 159
+        line_end: 179
+        excerpt: |
+          String creditCardExpiryMonth =  request.getParameter("credit_card_expiry_month").trim();
+          if (creditCardNumber.equals("")) {
+            if (missingFields == null) {
+              missingFields = new ArrayList();
+            }
+            // this need to be internationalized
+            missingFields.add("Credit Card Expiry Month");
+          }
+          String creditCardExpiryYear =  request.getParameter("credit_card_expiry_year").trim();
+          if (creditCardNumber.equals("")) {
+            if (missingFields == null) {
+              missingFields = new ArrayList();
+            }
+            // this need to be internationalized
+            missingFields.add("Credit Card Expiry Month");
+          }
+          String expiryDate = creditCardExpiryMonth + "/" + creditCardExpiryYear;
+          return new CreditCard(creditCardNumber,
+                                            creditCardType,
+                                            expiryDate);
+
+  - record_key: CCARD-EXPIRY-YEAR-RANGE-0001
+    kind: requirement
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL permit credit card expiry years in the range 2002-2005 as presented to users
+      in the account profile form.
+    confidence: medium
+    confidence_basis: >
+      edit_customer.jsp lines 260-264 define four waf:option values for credit_card_expiry_year:
+      2002, 2003, 2004, 2005. This represents the set of selectable years in the UI at the time
+      the form was created. No server-side validation or ejb-jar.xml constraints enforce a
+      specific year range, so this is a form presentation constraint only. Medium confidence
+      because the range is time-bound (the form was created for early 2000s) and may not reflect
+      runtime constraints.
+    risk_class: operational
+    basis: >
+      HTML form option values in edit_customer.jsp. No server-side validation of year range found.
+      The four-year range suggests the form was authored around 2002.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/edit_customer.jsp
+        line_start: 257
+        line_end: 265
+        excerpt: |
+          <waf:select size="1"
+                              name="credit_card_expiry_year">
+           <waf:selected><c:out value="${customer.account.creditCard.expiryYear}"/></waf:selected>
+           <waf:option value="2002" />
+           <waf:option value="2003" />
+           <waf:option value="2004" />
+           <waf:option value="2005" />
+          </waf:select>
+
+  - record_key: CCARD-ENTITY-CREATION-FLOW-0001
+    kind: workflow
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL support a complete customer account lifecycle including credit card
+      setup: (1) user fills edit_customer.jsp form with contact info, card type, card number,
+      and expiry month/year; (2) form posts to customer.do action with action=create or update;
+      (3) CustomerHTMLAction.perform() parses the request and extracts CreditCard object by
+      calling extractCreditCard(); (4) if validation passes, a CustomerEvent is created with
+      the CreditCard and dispatched to the business tier.
+    confidence: medium
+    confidence_basis: >
+      Edit form is defined in edit_customer.jsp (lines 49-50 show action="customer.do" and
+      action parameter set to "create" or "update"). CustomerHTMLAction lines 94-104 show the
+      controller receives the action parameter and creates a CustomerEvent with the extracted
+      CreditCard. However, the flow beyond CustomerHTMLAction.perform() into the EJB tier is
+      not visible in the provided source, so confidence is medium. The visible portion is high,
+      but the downstream handling is inferred.
+    risk_class: operational
+    basis: >
+      Form definition in edit_customer.jsp and controller implementation in CustomerHTMLAction
+      show the credit card extraction is part of a customer account workflow, not a standalone
+      operation. The CreditCard object is bundled with ContactInfo and ProfileInfo in a
+      CustomerEvent, indicating coordinated persistence.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/edit_customer.jsp
+        line_start: 49
+        line_end: 51
+        excerpt: |
+          <waf:form method="POST" action="customer.do" name="customerform">
+           <input type="hidden" name="action" value="update"/>
+      - path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CustomerHTMLAction.java
+        line_start: 86
+        line_end: 106
+        excerpt: |
+          public Event perform(HttpServletRequest request)
+            throws HTMLActionException {
+            // Extract attributes we will need
+            String actionType= (String)request.getParameter("action");
+            CustomerEvent event = null;
+            if (actionType == null) return null;
+            if (actionType.equals("create")) {
+              ContactInfo info = extractContactInfo(request, "_a");
+              CreditCard creditCard = extractCreditCard(request);
+              ProfileInfo profileInfo  = extractProfileInfo(request);
+              event = new CustomerEvent(CustomerEvent.CREATE, info, profileInfo, creditCard);
+              eventType = CustomerEvent.CREATE;
+            } else if (actionType.equals("update")) {
+              ContactInfo info = extractContactInfo(request, "_a");
+              CreditCard creditCard = extractCreditCard(request);
+              ProfileInfo profileInfo  = extractProfileInfo(request);
+              event = new CustomerEvent(CustomerEvent.UPDATE, info, profileInfo, creditCard);
+            }
+            return event;
+          }
+
+  - record_key: CCARD-DTD-SCHEMA-0001
+    kind: entity
+    capability_key: checkout-payment
+    requirement: >
+      The system SHALL enforce that CreditCard XML documents contain exactly three required
+      child elements: CardNumber, CardType, and ExpiryDate, each with character data content.
+      The DTD defines these as required, non-repeating elements with no attributes.
+    confidence: high
+    confidence_basis: >
+      CreditCard.dtd (lines 38-41) declares the DTD structure:
+      <!ELEMENT CreditCard (CardNumber, CardType, ExpiryDate)> and individual element
+      declarations for each as (#PCDATA) only. The sequence is mandatory (no *, +, or ?
+      quantifiers). CreditCard.java references this DTD via DTD_SYSTEM_ID constant (line 55)
+      and fromDOM() uses XMLDocumentUtils.getFirstChild() and getNextSibling() to enforce
+      element order and presence (lines 121-126).
+    risk_class: operational
+    basis: >
+      Declarative DTD schema enforcement. XML serialization in CreditCard.toDOM() and
+      fromDOM() both follow the three-element structure. The DTD is referenced and used by
+      the application for validation during XML deserialization.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/creditcard/src/com/sun/j2ee/blueprints/creditcard/rsrc/schemas/CreditCard.dtd
+        line_start: 38
+        line_end: 42
+        excerpt: |
+          <!ELEMENT CreditCard (CardNumber, CardType, ExpiryDate)>
+          <!ELEMENT CardNumber (#PCDATA)>
+          <!ELEMENT CardType (#PCDATA)>
+          <!ELEMENT ExpiryDate (#PCDATA)>
+
+findings:
+  - kind: conflict
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CustomerHTMLAction.java
+    description: >
+      Lines 152, 160, and 168 check creditCardNumber.equals("") instead of checking the
+      respective field (creditCardType, creditCardExpiryMonth, creditCardExpiryYear). This
+      appears to be a copy-paste bug. All four checks validate only creditCardNumber, so
+      card type, expiry month, and expiry year validation is effectively bypassed. The
+      missingFields collection will never be populated for these three fields.
+
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/docroot/edit_customer.jsp
+    description: >
+      The form displays credit card fields and labels them as "required" via the petstore_form
+      CSS class and lack of optional markers, but no HTML5 required attributes or explicit
+      client-side validation is present. The form relies entirely on server-side validation
+      in CustomerHTMLAction. It is unclear whether the system is intended to prevent form
+      submission on missing card fields at the browser level or only at the server level.
+
+  - kind: unparseable
+    path: legacy-source/petstore1.3.2/src/apps/petstore/src/com/sun/j2ee/blueprints/petstore/controller/web/actions/CustomerHTMLAction.java
+    description: >
+      Lines 245-248 catch a MissingFormDataException and set it as a request attribute,
+      but the exception is thrown only when missingFields != null. However, due to the
+      creditCardNumber-checking bug identified above, the missingFields list will likely
+      be null even when card type, month, or year are missing. The exception handling flow
+      is unclear if validation actually succeeds despite missing fields.
