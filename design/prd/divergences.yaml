@@ -1,25 +1,5 @@
 divergences:
   - claim: |
-      Orders below a single $500 order-total threshold are approved automatically; everything else waits for an administrator.
-    code_says: |
-      PurchaseOrderMDB.canIApprove():
-        if (locale.equals(Locale.US)) { if (purchaseOrder.getTotalPrice() < 500) return true; }
-        else if (locale.equals(Locale.JAPAN)) { if (purchaseOrder.getTotalPrice() < 50000) return true; }
-        return false;
-      The threshold depends on the order's locale. en_US auto-approves under 500 and ja_JP under 50000. A zh_CN order is never auto-approved at any total.
-    document_says: |
-      PRD OP-1.2: "An order with a total below $500 is approved automatically, with no human involvement."
-      PRD OP-1.4: "The threshold is a single monetary value applied to the order total, not per line or per category."
-      PRD notes: "A second threshold at $50,000 exists in the code but has no behaviour attached beyond the first, so all review effectively happens at one level."
-      User manual: "Orders under $500 are approved without anyone touching them."
-    code_ref: legacy-source/petstore1.3.2/src/apps/opc/src/com/sun/j2ee/blueprints/opc/ejb/PurchaseOrderMDB.java#L183-L191
-    document_ref: design/sources/markdown/java-pet-store-1-3-2-product-requirements-document/extracted.md#L202-L218
-    capability: order-approval
-    severity: major
-    notes: |
-      The 50000 figure is the ja_JP threshold (prices are per-locale, see the prices entry), not a dead second tier. The PRD keeps the locale-specific rule as current and asks under Open questions whether zh_CN should get a threshold of its own. This entry replaces an earlier one that read the 50000 check as having no behaviour.
-
-  - claim: |
       Every item has one price that serves all three locales, formatted per locale but never converted.
     code_says: |
       Populate-UTF8.xml gives each item one ItemDetails per locale, each with its own ListPrice and UnitCost. For EST-1:

@@ -164,6 +164,7 @@ Constraints:
 - English, Japanese and Chinese are supported end to end, including catalogue content. Request and response encoding must round-trip non-Latin input. Prices and dates are formatted per locale.
 - Listings are paged rather than returning whole result sets.
 - Legacy session idle timeouts are 15 minutes for the storefront and 54 minutes for the administration and supplier areas.
+- Automatic approval follows the legacy code, as decided in review: an en_US order is approved automatically when its total is under 500, and a ja_JP order when its total is under 50,000. Every other order starts as Pending and waits for an administrator decision. The 50,000 figure is not a second tier above $500. It applies only to ja_JP orders, whose prices are in that locale's own units.
 - Every order carries exactly one status: Pending, Approved, Denied, Partly shipped or Completed. Denial is terminal, and an order is Completed only when every line has shipped in full.
 - A line item keeps the unit price at the time of ordering and tracks quantity shipped separately from quantity ordered. An order keeps its own copy of the addresses and card, so later account changes do not rewrite it.
 
@@ -185,7 +186,7 @@ Explicitly stubbed in the legacy system. These appear to work but do nothing, an
 
 ## Open questions
 
-1. Approval threshold. The documents describe a single $500 rule. The code auto-approves only en_US orders under 500 and ja_JP orders under 50,000, so a zh_CN order is always held for review. This PRD keeps the locale-specific behaviour (order-approval) as current. Should zh_CN get a threshold of its own? Should the rule become configurable, or a rule set that can also consider customer age, destination and item category?
+1. Approval threshold. Decided in review: the code is current (see Constraints). What remains open is forward-looking. Should zh_CN orders get an automatic-approval threshold of their own, given that today every zh_CN order is held? Should the rule become configurable, or a rule set that can also consider customer age, destination and item category?
 2. Partly shipped orders. The code has a fifth status for an order where only some lines shipped, and the admin client never loads orders in that status. This PRD keeps the status and shows it in View non-pending orders. Should a back-ordered order also become a distinct status, instead of looking identical to a fresh approval?
 3. Prices. The documents say one price serves all locales. The catalogue data holds a separate price per locale (for example 10.00, 1551 and 86 for the same item). This PRD treats per-locale prices as current. Is that the intended pricing model?
 4. Confirmation e-mail. The confirmation screen promises an e-mail "soon", but no e-mail is sent when an order is placed. A held order produces nothing until an administrator decides it. Should placement send an e-mail?
