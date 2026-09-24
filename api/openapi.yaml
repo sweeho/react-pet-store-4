@@ -1,0 +1,772 @@
+# EXTRACTED FROM LEGACY SOURCE — evidence of what exists, not a build target. Where this disagrees with a capability delta spec, the delta spec wins.
+openapi: 3.0.0
+info:
+  title: PetStore Legacy API
+  version: 1.0.0
+  description: OpenAPI specification extracted from legacy Java PetStore 1.3.2 application
+servers:
+  - url: http://localhost:8000
+    description: Development server
+
+paths:
+  /catalog/categories:
+    get:
+      summary: Get product categories
+      operationId: getCategories
+      tags:
+        - Product Catalog
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [en_US, ja_JP, zh_CN]
+          description: Locale for category names and descriptions
+      responses:
+        '200':
+          description: List of product categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+
+  /catalog/products:
+    get:
+      summary: Get products in a category
+      operationId: getProducts
+      tags:
+        - Product Catalog
+      parameters:
+        - name: categoryId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Category ID
+        - name: locale
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [en_US, ja_JP, zh_CN]
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Pagination start index
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 2
+          description: Number of items to return
+      responses:
+        '200':
+          description: Paginated list of products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+
+  /catalog/search:
+    get:
+      summary: Search products by keyword
+      operationId: searchItems
+      tags:
+        - Product Catalog
+      parameters:
+        - name: keywords
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search keywords
+        - name: locale
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [en_US, ja_JP, zh_CN]
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 2
+      responses:
+        '200':
+          description: Search results with pagination
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+
+  /cart/add:
+    post:
+      summary: Add item to shopping cart
+      operationId: addToCart
+      tags:
+        - Shopping Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemId:
+                  type: string
+                quantity:
+                  type: integer
+                  default: 1
+      responses:
+        '200':
+          description: Item added to cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart/remove:
+    post:
+      summary: Remove item from shopping cart
+      operationId: removeFromCart
+      tags:
+        - Shopping Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemId:
+                  type: string
+      responses:
+        '200':
+          description: Item removed from cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart/update:
+    post:
+      summary: Update quantities for multiple items in cart
+      operationId: updateCart
+      tags:
+        - Shopping Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  description: Map of itemId to quantity
+      responses:
+        '200':
+          description: Cart updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart/empty:
+    post:
+      summary: Empty the shopping cart
+      operationId: emptyCart
+      tags:
+        - Shopping Cart
+      responses:
+        '200':
+          description: Cart emptied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart:
+    get:
+      summary: Get current shopping cart
+      operationId: getCart
+      tags:
+        - Shopping Cart
+      responses:
+        '200':
+          description: Current shopping cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /auth/signon:
+    post:
+      summary: Customer sign-on authentication
+      operationId: signOn
+      tags:
+        - Customer Account
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                j_username:
+                  type: string
+                j_password:
+                  type: string
+              required:
+                - j_username
+                - j_password
+      responses:
+        '200':
+          description: Sign-on successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '401':
+          description: Authentication failed
+
+  /auth/createuser:
+    post:
+      summary: Create new customer account
+      operationId: createUser
+      tags:
+        - Customer Account
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                j_username:
+                  type: string
+                j_password:
+                  type: string
+                j_password_2:
+                  type: string
+              required:
+                - j_username
+                - j_password
+                - j_password_2
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: Account creation failed (duplicate username or password mismatch)
+
+  /customer/profile:
+    get:
+      summary: Get customer profile
+      operationId: getProfile
+      tags:
+        - Customer Account
+      responses:
+        '200':
+          description: Customer profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+    put:
+      summary: Update customer profile
+      operationId: updateProfile
+      tags:
+        - Customer Account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+
+  /order/create:
+    post:
+      summary: Create purchase order
+      operationId: createOrder
+      tags:
+        - Order Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /order/{orderId}:
+    get:
+      summary: Get order details
+      operationId: getOrder
+      tags:
+        - Order Management
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /admin/login:
+    post:
+      summary: Admin form-based login
+      operationId: adminLogin
+      tags:
+        - Admin Operations
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                j_username:
+                  type: string
+                j_password:
+                  type: string
+              required:
+                - j_username
+                - j_password
+      responses:
+        '200':
+          description: Admin login successful
+        '401':
+          description: Admin login failed
+
+  /admin/orders:
+    get:
+      summary: Get orders filtered by status (admin)
+      operationId: getOrdersByStatus
+      tags:
+        - Admin Operations
+      parameters:
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [PENDING, APPROVED, DENIED, COMPLETED, SHIPPED_PART]
+      responses:
+        '200':
+          description: Orders matching status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+  /admin/orders/approve:
+    post:
+      summary: Approve or deny order (admin)
+      operationId: updateOrderStatus
+      tags:
+        - Admin Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                status:
+                  type: string
+                  enum: [APPROVED, DENIED]
+              required:
+                - orderId
+                - status
+      responses:
+        '200':
+          description: Order status updated
+
+  /admin/analytics/revenue:
+    get:
+      summary: Get revenue analytics
+      operationId: getRevenueAnalytics
+      tags:
+        - Admin Operations
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Revenue by category
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+
+  /admin/analytics/orders:
+    get:
+      summary: Get order quantity analytics
+      operationId: getOrderQuantityAnalytics
+      tags:
+        - Admin Operations
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order quantities by category
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+
+  /supplier/login:
+    post:
+      summary: Supplier form-based login
+      operationId: supplierLogin
+      tags:
+        - Supplier Integration
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                j_username:
+                  type: string
+                j_password:
+                  type: string
+              required:
+                - j_username
+                - j_password
+      responses:
+        '200':
+          description: Supplier login successful
+        '401':
+          description: Supplier login failed
+
+  /inventory/items:
+    get:
+      summary: Get inventory items (supplier)
+      operationId: getInventoryItems
+      tags:
+        - Inventory & Fulfillment
+      responses:
+        '200':
+          description: Current inventory
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+
+  /inventory/update:
+    post:
+      summary: Update inventory quantities (supplier)
+      operationId: updateInventory
+      tags:
+        - Inventory & Fulfillment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  description: Map of itemId to new quantity
+      responses:
+        '200':
+          description: Inventory updated
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        categoryId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - categoryId
+        - name
+
+    Product:
+      type: object
+      properties:
+        productId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        categoryId:
+          type: string
+
+    Item:
+      type: object
+      properties:
+        itemId:
+          type: string
+        productId:
+          type: string
+        productName:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        unitCost:
+          type: number
+          format: float
+        attribute:
+          type: string
+
+    Page:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        start:
+          type: integer
+        hasNext:
+          type: boolean
+
+    Cart:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              itemId:
+                type: string
+              productName:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
+                format: float
+              lineTotal:
+                type: number
+                format: float
+        subTotal:
+          type: number
+          format: float
+        count:
+          type: integer
+
+    ContactInfo:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        street1:
+          type: string
+        street2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+
+    CreditCard:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        cardType:
+          type: string
+          enum: [Visa, MasterCard, AmEx, Discover]
+        expiryDate:
+          type: string
+          pattern: ^\d{2}/\d{4}$
+
+    Customer:
+      type: object
+      properties:
+        userId:
+          type: string
+        email:
+          type: string
+        locale:
+          type: string
+
+    Profile:
+      type: object
+      properties:
+        preferredLanguage:
+          type: string
+          enum: [en_US, ja_JP, zh_CN]
+        favoriteCategory:
+          type: string
+        myListPreference:
+          type: boolean
+        bannerPreference:
+          type: boolean
+
+    OrderRequest:
+      type: object
+      properties:
+        billTo:
+          $ref: '#/components/schemas/ContactInfo'
+        shipTo:
+          $ref: '#/components/schemas/ContactInfo'
+        creditCard:
+          $ref: '#/components/schemas/CreditCard'
+      required:
+        - billTo
+        - shipTo
+        - creditCard
+
+    LineItem:
+      type: object
+      properties:
+        lineNumber:
+          type: string
+        itemId:
+          type: string
+        productId:
+          type: string
+        category:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+          format: float
+
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: string
+        userId:
+          type: string
+        orderDate:
+          type: string
+          format: date-time
+        billTo:
+          $ref: '#/components/schemas/ContactInfo'
+        shipTo:
+          $ref: '#/components/schemas/ContactInfo'
+        creditCard:
+          $ref: '#/components/schemas/CreditCard'
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        totalPrice:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [PENDING, APPROVED, DENIED, COMPLETED, SHIPPED_PART]
+        locale:
+          type: string
+
+    InventoryItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+        productName:
+          type: string
+        quantity:
+          type: integer
+        lastUpdated:
+          type: string
+          format: date-time

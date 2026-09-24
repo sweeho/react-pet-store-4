@@ -1,0 +1,180 @@
+%% EXTRACTED FROM LEGACY SOURCE — evidence of what exists, not a build target. Where this disagrees with a capability delta spec, the delta spec wins.
+erDiagram
+    CUSTOMER ||--o{ ACCOUNT : has
+    CUSTOMER ||--o{ PROFILE : has
+    ACCOUNT ||--o{ CONTACT_INFO : has
+    ACCOUNT ||--o{ CREDIT_CARD : has
+    CUSTOMER ||--o{ SHOPPING_CART : owns
+    SHOPPING_CART ||--|{ CART_ITEM : contains
+    CART_ITEM }o--|| ITEM : references
+    PURCHASE_ORDER ||--o{ LINE_ITEM : contains
+    LINE_ITEM }o--|| ITEM : references
+    CUSTOMER ||--o{ PURCHASE_ORDER : places
+    PURCHASE_ORDER ||--o{ CONTACT_INFO : has_billing
+    PURCHASE_ORDER ||--o{ CONTACT_INFO : has_shipping
+    PURCHASE_ORDER ||--o{ CREDIT_CARD : uses
+    CATEGORY ||--o{ PRODUCT : contains
+    PRODUCT ||--o{ ITEM : has_variants
+    CATEGORY ||--o{ CATEGORY_DETAILS : translates
+    CATEGORY_DETAILS ||--|| LOCALE : for_locale
+    PRODUCT ||--o{ PRODUCT_DETAILS : translates
+    PRODUCT_DETAILS ||--|| LOCALE : for_locale
+    ITEM ||--o{ INVENTORY : tracks
+    INVENTORY ||--o{ SUPPLIER : manages
+    SUPPLIER ||--o{ PURCHASE_ORDER : fulfills_via_orders
+    PURCHASE_ORDER ||--o{ ORDER_APPROVAL : requires
+    ORDER_APPROVAL ||--o{ ADMIN : reviewed_by
+
+    CUSTOMER {
+        string userId PK
+        string email
+        datetime createdAt
+    }
+
+    ACCOUNT {
+        string accountId PK
+        string customerId FK
+        string status
+    }
+
+    PROFILE {
+        string profileId PK
+        string customerId FK
+        string preferredLanguage
+        string favoriteCategory
+        boolean myListPreference
+        boolean bannerPreference
+    }
+
+    CONTACT_INFO {
+        string contactId PK
+        string firstName
+        string lastName
+        string email
+        string street1
+        string street2
+        string city
+        string state
+        string zipCode
+        string country
+        string phoneNumber
+    }
+
+    CREDIT_CARD {
+        string cardId PK
+        string cardNumber
+        string cardType
+        string expiryDate
+    }
+
+    SHOPPING_CART {
+        string cartId PK
+        string customerId FK
+        datetime createdAt
+        decimal subTotal
+        integer count
+        string locale
+    }
+
+    CART_ITEM {
+        string cartItemId PK
+        string cartId FK
+        string itemId FK
+        integer quantity
+        decimal unitCost
+    }
+
+    CATEGORY {
+        string categoryId PK
+        string name
+        string description
+    }
+
+    CATEGORY_DETAILS {
+        string categoryDetailId PK
+        string categoryId FK
+        string locale FK
+        string localizedName
+        string localizedDescription
+    }
+
+    PRODUCT {
+        string productId PK
+        string categoryId FK
+        string name
+        string description
+    }
+
+    PRODUCT_DETAILS {
+        string productDetailId PK
+        string productId FK
+        string locale FK
+        string localizedName
+        string localizedDescription
+    }
+
+    ITEM {
+        string itemId PK
+        string productId FK
+        string categoryId FK
+        string attribute
+        decimal unitCost
+        string imageLocation
+    }
+
+    INVENTORY {
+        string inventoryId PK
+        string itemId FK
+        integer quantity
+        string supplierId FK
+        datetime lastUpdated
+    }
+
+    SUPPLIER {
+        string supplierId PK
+        string companyName
+        string contactEmail
+    }
+
+    PURCHASE_ORDER {
+        string orderId PK
+        string userId FK
+        datetime orderDate
+        string status
+        string locale
+        decimal totalPrice
+        string billingContactId FK
+        string shippingContactId FK
+        string creditCardId FK
+        string emailId
+    }
+
+    LINE_ITEM {
+        string lineItemId PK
+        string orderId FK
+        string itemId FK
+        string lineNumber
+        integer quantity
+        decimal unitCost
+    }
+
+    ORDER_APPROVAL {
+        string approvalId PK
+        string orderId FK
+        string status
+        datetime createdAt
+        string adminId FK "nullable"
+        datetime reviewedAt "nullable"
+    }
+
+    ADMIN {
+        string adminId PK
+        string username
+        string role
+    }
+
+    LOCALE {
+        string localeCode PK
+        string language
+        string country
+    }
