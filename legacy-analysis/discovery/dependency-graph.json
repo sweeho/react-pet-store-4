@@ -1,0 +1,135 @@
+{
+  "modules": [
+    { "id": "petstore", "type": "app", "name": "apps/petstore", "loc": 18460 },
+    { "id": "opc", "type": "app", "name": "apps/opc", "loc": 5212 },
+    { "id": "admin", "type": "app", "name": "apps/admin", "loc": 5497 },
+    { "id": "supplier", "type": "app", "name": "apps/supplier", "loc": 4097 },
+    { "id": "purchaseorder", "type": "component", "name": "components/purchaseorder", "loc": 2366 },
+    { "id": "customer", "type": "component", "name": "components/customer", "loc": 2385 },
+    { "id": "catalog", "type": "component", "name": "components/catalog", "loc": 2866 },
+    { "id": "cart", "type": "component", "name": "components/cart", "loc": 829 },
+    { "id": "creditcard", "type": "component", "name": "components/creditcard", "loc": 769 },
+    { "id": "signon", "type": "component", "name": "components/signon", "loc": 1559 },
+    {
+      "id": "servicelocator",
+      "type": "component",
+      "name": "components/servicelocator",
+      "loc": 758
+    },
+    { "id": "contactinfo", "type": "component", "name": "components/contactinfo", "loc": 1266 },
+    { "id": "address", "type": "component", "name": "components/address", "loc": 992 },
+    { "id": "lineitem", "type": "component", "name": "components/lineitem", "loc": 820 },
+    {
+      "id": "processmanager",
+      "type": "component",
+      "name": "components/processmanager",
+      "loc": 1322
+    },
+    { "id": "supplierpo", "type": "component", "name": "components/supplierpo", "loc": 1924 },
+    { "id": "xmldocuments", "type": "component", "name": "components/xmldocuments", "loc": 2042 },
+    { "id": "mailer", "type": "component", "name": "components/mailer", "loc": 840 },
+    { "id": "asyncsender", "type": "component", "name": "components/asyncsender", "loc": 549 },
+    { "id": "uidgen", "type": "component", "name": "components/uidgen", "loc": 756 },
+    { "id": "util", "type": "component", "name": "components/util", "loc": 181 },
+    { "id": "encodingfilter", "type": "component", "name": "components/encodingfilter", "loc": 180 }
+  ],
+  "edges": [
+    { "from": "petstore", "to": "cart", "weight": 3, "description": "shopping cart operations" },
+    {
+      "from": "petstore",
+      "to": "customer",
+      "weight": 3,
+      "description": "customer profile and account"
+    },
+    {
+      "from": "petstore",
+      "to": "purchaseorder",
+      "weight": 3,
+      "description": "order creation and retrieval"
+    },
+    { "from": "petstore", "to": "catalog", "weight": 3, "description": "product browsing" },
+    { "from": "petstore", "to": "signon", "weight": 2, "description": "authentication" },
+    { "from": "petstore", "to": "creditcard", "weight": 2, "description": "payment validation" },
+    {
+      "from": "petstore",
+      "to": "contactinfo",
+      "weight": 2,
+      "description": "shipping/billing addresses"
+    },
+    { "from": "petstore", "to": "servicelocator", "weight": 1, "description": "service lookup" },
+    {
+      "from": "opc",
+      "to": "purchaseorder",
+      "weight": 3,
+      "description": "order processing and approval"
+    },
+    { "from": "opc", "to": "processmanager", "weight": 3, "description": "workflow transitions" },
+    { "from": "opc", "to": "xmldocuments", "weight": 2, "description": "order approval documents" },
+    { "from": "opc", "to": "mailer", "weight": 2, "description": "notification generation" },
+    { "from": "opc", "to": "asyncsender", "weight": 1, "description": "async messaging" },
+    { "from": "opc", "to": "admin", "weight": 1, "description": "admin integration" },
+    {
+      "from": "supplier",
+      "to": "supplierpo",
+      "weight": 3,
+      "description": "supplier order management"
+    },
+    {
+      "from": "supplier",
+      "to": "processmanager",
+      "weight": 2,
+      "description": "fulfillment workflow"
+    },
+    { "from": "supplier", "to": "lineitem", "weight": 2, "description": "order line items" },
+    { "from": "supplier", "to": "xmldocuments", "weight": 2, "description": "order documents" },
+    { "from": "admin", "to": "opc", "weight": 2, "description": "order administration" },
+    { "from": "admin", "to": "xmldocuments", "weight": 1, "description": "document management" },
+    { "from": "purchaseorder", "to": "lineitem", "weight": 3, "description": "order items" },
+    { "from": "purchaseorder", "to": "creditcard", "weight": 2, "description": "payment info" },
+    { "from": "purchaseorder", "to": "contactinfo", "weight": 2, "description": "addresses" },
+    {
+      "from": "purchaseorder",
+      "to": "xmldocuments",
+      "weight": 2,
+      "description": "order documents"
+    },
+    { "from": "cart", "to": "customer", "weight": 2, "description": "cart ownership" },
+    { "from": "customer", "to": "contactinfo", "weight": 2, "description": "customer addresses" },
+    { "from": "customer", "to": "signon", "weight": 1, "description": "user authentication" },
+    { "from": "creditcard", "to": "contactinfo", "weight": 1, "description": "billing address" },
+    { "from": "catalog", "to": "util", "weight": 1, "description": "utility functions" },
+    {
+      "from": "processmanager",
+      "to": "xmldocuments",
+      "weight": 2,
+      "description": "transition documents"
+    },
+    { "from": "mailer", "to": "xmldocuments", "weight": 1, "description": "email formatting" },
+    { "from": "uidgen", "to": "util", "weight": 1, "description": "utility functions" },
+    { "from": "asyncsender", "to": "mailer", "weight": 2, "description": "email delivery" },
+    { "from": "signon", "to": "customer", "weight": 1, "description": "user lookup" }
+  ],
+  "layers": {
+    "presentation": ["petstore", "opc", "admin", "supplier"],
+    "domain_services": [
+      "purchaseorder",
+      "cart",
+      "customer",
+      "catalog",
+      "creditcard",
+      "signon",
+      "contactinfo",
+      "supplierpo"
+    ],
+    "infrastructure": [
+      "processmanager",
+      "mailer",
+      "asyncsender",
+      "xmldocuments",
+      "servicelocator",
+      "uidgen",
+      "util",
+      "encodingfilter"
+    ]
+  }
+}

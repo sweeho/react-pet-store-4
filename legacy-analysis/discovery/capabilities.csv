@@ -1,0 +1,11 @@
+capability_key,name,summary
+product-catalog,Product Catalog,Product browsing, search, filtering, and inventory visibility across categories
+shopping-cart,Shopping Cart,Shopping cart management: add items, update quantities, remove items, calculate totals
+checkout-payment,Checkout & Payment,Order creation, payment processing, credit card validation and transaction handling
+order-management,Order Management,Order tracking, status updates, fulfillment coordination, and delivery management
+customer-account,Customer Account,Customer registration, account management, profile maintenance, and authentication
+inventory-fulfillment,Inventory & Fulfillment,Stock management, supplier orders, order fulfillment, and shipping
+admin-operations,Admin Operations,System administration, monitoring, configuration, and operational controls
+order-approval,Order Approval,Order validation, approval workflows, and fraud/risk assessment before fulfillment
+supplier-integration,Supplier Integration,Supplier order placement, status tracking, and B2B integration
+notification-messaging,Notification & Messaging,Email notifications, order confirmations, and system event propagation
