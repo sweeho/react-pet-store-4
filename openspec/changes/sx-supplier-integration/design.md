@@ -1,165 +1,162 @@
 # Supplier Integration Design
 
-## Legacy Implementation Notes
+## Overview
 
-### Authentication & Session Management
+The supplier integration capability enables the supplier module to receive purchase orders from the Order Processing Center via JMS messaging, process those orders against inventory, fulfill what's available, and send back invoices for shipped items. The module includes both backend processing (EJBs and JMS) and a web-based frontend for supplier staff to manage inventory and authenticate.
 
-The legacy supplier module uses Java EE form-based authentication via FORM auth-method in web.xml. Login is processed through `j_security_check` endpoint. Session timeout is configured at the container level (54 minutes).
+## Architecture
 
-**Sources:**
+### Backend Components
 
-- `web.xml` login-config: FORM auth with `/login.jsp` and `/error.jsp`
-- Session timeout declared in `web.xml` session-config
+**Message-Driven Bean (SupplierOrderMDB)**
 
-### Inventory Management
+- Listens to JMS Queue for incoming purchase order XML messages
+- Extracts TextMessage content and delegates to OrderFulfillmentFacade
+- Handles invoice transmission after fulfillment
+- Transaction type: Container-managed
 
-Inventory is modeled as a CMP 2.x Entity EJB (`InventoryEJB`) with two core fields:
+**Order Fulfillment Facade (OrderFulfillmentFacadeEJB)**
 
-- `itemId` (String, primary key)
-- `quantity` (integer)
+- Parses purchase order XML via TPASupplierOrderXDE
+- Persists orders to the SupplierOrder entity
+- Implements fulfillment logic: inventory checks, quantity reduction, line item tracking
+- Generates invoice XML for shipped items via TPAInvoiceXDE
+- Transaction attribute: Required (all methods)
+- Queries pending orders for retry fulfillment when inventory is updated
 
-The `reduceQuantity(int)` method is wrapped in container-managed transactions (trans-attribute: Required). Inventory lookups use finder methods by primary key. Queries for all inventory items are available via home interface.
+**Entity Beans**
 
-**Sources:**
+- **SupplierOrderEJB**: CMP Entity bean with poId (String, primary key), poDate (long), poStatus (String), plus relationships to ContactInfo and LineItems
+- **ContactInfoEJB**: Stores shipping/contact information (givenName, familyName, telephone, email)
+- **LineItemEJB**: Stores individual line items with categoryId, productId, itemId, lineNumber, quantity, unitPrice, quantityShipped
+- All use two-phase creation: ejbCreate for CMP field initialization, ejbPostCreate for relationship setup
 
-- `ejb-jar.xml`: InventoryEJB entity definition (CMP 2.x)
-- `InventoryEJB.java`: Core inventory operations
+### Data Model
 
-### Purchase Order Workflow
+**SupplierOrder CMP Entity**
 
-Purchase orders are received from the Order Processing Center via JMS message queue (`SupplierOrderMDB`). The message-driven bean extracts XML from `TextMessage` and delegates to `OrderFulfillmentFacadeEJB`.
+- Primary Key: poId (java.lang.String)
+- Fields: poDate (long, milliseconds since epoch), poStatus (String)
+- One-to-One with ContactInfo: unidirectional, cascade-delete on ContactInfo side
+- One-to-Many with LineItem: unidirectional, cascade-delete on LineItem side
+- Finder methods: findByPrimaryKey(String), findOrdersByStatus(String status)
 
-**Order Processing Flow:**
+**Status Lifecycle**
 
-1. Receive PO XML via JMS
-2. Parse XML to SupplierOrder object via `TPASupplierOrderXDE`
-3. Persist order via `SupplierOrderEJB` (CMP entity)
-4. Check inventory for each line item
-5. If sufficient stock exists, reduce inventory and mark item as shipped
-6. Generate invoice for fulfilled items via `TPAInvoiceXDE`
-7. Send invoice back to OPC via transition delegate
+- PENDING: newly created orders
+- APPROVED: order approved for fulfillment
+- COMPLETED: all line items shipped
+- DENIED: order rejected
+- Valid transitions: PENDING→APPROVED→COMPLETED or PENDING→DENIED
 
-**Partial Fulfillment:**
-Orders support partial fulfillment. Only items with available inventory are shipped; pending items remain unfulfilled and can be fulfilled on subsequent retries.
+**Date Handling**
 
-**Sources:**
+- Orders store dates as long (milliseconds since epoch) in the database
+- XML representation uses yyyy-MM-dd format (SimpleDateFormat pattern)
+- Conversion occurs at persistence boundaries (ejbCreate) and retrieval (getData)
+- Fallback to current date if XML parsing fails (logged to stderr)
 
-- `SupplierOrderMDB.java`: JMS message receiver
-- `OrderFulfillmentFacadeEJB.java`: Core fulfillment logic
-- `SupplierOrderEJB.java`: PO entity definition
+**XML Processing**
 
-### Order Status Lifecycle
+- Validation parameters configured via environment entries:
+  - param/xml/validation/SupplierOrder
+  - param/xml/xsdvalidation/SupplierOrder
+  - param/xml/xsdvalidation/Invoice
+- Supplier order documents validated per SupplierOrder.dtd
+- Invoice documents validated per schema configuration
 
-Orders transition through states defined in `OrderStatusNames`:
+### JMS Integration
 
-- `PENDING`: Initially created or awaiting inventory
-- `APPROVED`: Order has been accepted (set by OPC, not supplier module)
-- `COMPLETED`: All line items fulfilled and shipped
-- `DENIED`: Order cannot be fulfilled
+**Incoming Queue**
 
-**Sources:**
+- Message type: TextMessage containing XML purchase order
+- Listener: SupplierOrderMDB
+- Processing: one-way conversion to order objects and persistence
 
-- `OrderStatusNames.java`: Status constant definitions
+**Outgoing Topic**
 
-### Invoice Generation
+- Topic name: jms/opc/InvoiceTopic
+- Message type: TextMessage containing XML invoice
+- Publisher: SupplierOrderMDB via TransitionDelegate
+- Trigger: Only sent when items were fulfilled (non-null invoice)
 
-Invoices are XML documents created via `TPAInvoiceXDE` and include:
+### Web Tier
 
-- Order ID
-- User ID ("Dear PetStore Customer")
-- Order date (from purchase order)
-- Current shipping date
-- Line items for all fulfilled items (category, product, item ID, line number, quantity, unit price)
+**Authentication**
 
-Invoices are filtered to include only items that were actually shipped (tracked in a map during partial fulfillment).
+- Method: Form-based via web.xml login-config
+- Form endpoint: /login.jsp posting to j_security_check
+- Error page: /error.jsp
+- Realm: default (container-managed)
 
-**Sources:**
+**Navigation**
 
-- `OrderFulfillmentFacadeEJB.createInvoice()`: Invoice generation logic
-- `TPAInvoiceXDE`: XML document handler
+- Entry point: /index.jsp (welcome file)
+- Logout: /logout.jsp (invalidates session)
+- Protected resource: RcvrRequestProcessor servlet (administrator role required)
+- Session timeout: 54 minutes (web.xml session-config)
 
-### Inventory Update & Pending Order Retry
+**Servlet Routing**
 
-When inventory is updated via the UI, the system:
+- RcvrRequestProcessor handles currentScreen parameter:
+  - currentScreen=displayinventory → forward to displayinventory.jsp
+  - currentScreen=logout → forward to logout.jsp
+  - currentScreen=updateinventory → call updateInventory(), processPendingPO(), sendInvoices() within UserTransaction
 
-1. Updates selected inventory items with new quantities
-2. Queries for all pending orders
-3. Attempts fulfillment on each pending order with the new stock
-4. Generates and sends invoices for any newly fulfilled items
+**Login JSP**
 
-All operations are wrapped in a user-managed transaction (`UserTransaction`).
+- Location: /login.jsp
+- Form: posts to j_security_check with j_username and j_password fields
+- Pre-fills username and password with "supplier"
 
-**Sources:**
+**Home JSP**
 
-- `RcvrRequestProcessor.updateInventory()`: Parses request parameters (item*\*, qty*\*)
-- `RcvrRequestProcessor.processPendingPO()`: Retry fulfillment
-- `OrderFulfillmentFacadeEJB.processPendingPO()`: Query pending orders
+- Location: /index.jsp
+- Displays purpose of supplier inventory module
+- Two forms: one to display inventory, one to logout
+- Both submit to RcvrRequestProcessor via POST
 
-### Web Application Structure
+## Implementation Notes
 
-The supplier module is a servlet-based application:
+### Legacy Stack Metadata
 
-- **Login**: `/login.jsp` - form-based authentication with pre-filled credentials
-- **Home**: `/index.jsp` - navigation page after login
-- **Display Inventory**: `/displayinventory.jsp` - lists all inventory with update controls
-- **Request Processing**: `RcvrRequestProcessor` servlet - handles form submissions
-- **Logout**: `/logout.jsp` - session invalidation endpoint
+- Framework: EJB 2.x (CMP), JSP, Servlet, JMS, Container-managed transactions
+- Authentication: Form-based (j_security_check)
+- Authorization: Role-based (administrator role for RcvrRequestProcessor)
+- Transaction model: Container-managed (trans-attribute=Required) for EJBs, UserTransaction for servlet-level coordination
+- XML processing: DOM-based serialization/deserialization with custom DTD/XSD validation
 
-Authorization is controlled via `web.xml` security-constraint on `/RcvrRequestProcessor` (requires administrator role).
+### Known Constraints
 
-**Sources:**
+1. **Date Parsing Fallback**: XML parsing errors default to current date with stderr logging only. No retry or validation of fallback behavior documented.
 
-- `web.xml`: Security configuration and servlet mappings
-- JSP files under `/docroot/`
+2. **Partial Fulfillment Semantics**: Line items can be partially shipped. The order transitions to COMPLETED only if ALL line items are fulfilled (allItemsAvailable flag). Unclear whether partial COMPLETED at line level affects order status.
 
-### XML Document Validation
+3. **Inventory Not Found**: FinderException when inventory doesn't exist is swallowed and treated same as insufficient quantity. No distinction between "never populated" and "insufficient stock".
 
-XML validation for both purchase orders and invoices can be configured independently via environment entries:
+4. **Invoice Generation Failures**: XMLDocumentException in createInvoice is caught and null returned, printed to System.out. No alerting or retry mechanism specified.
 
-- `param/xml/validation/SupplierOrder`
-- `param/xml/xsdvalidation/SupplierOrder`
-- `param/xml/xsdvalidation/Invoice`
+5. **Quantity Validation**: updateInventory() accepts any non-negative integer. No upper bounds or sanity checks for large values.
 
-These are read during bean creation and passed to XML document handlers.
+6. **Missing Parameter Handling**: RcvrRequestProcessor.doPost() assumes currentScreen parameter exists; NullPointerException possible if missing.
 
-**Sources:**
+7. **Silent Inventory Update Failures**: updateInventory() catches FinderException and silently continues. User receives no feedback on which updates succeeded or failed.
 
-- `ejb-jar.xml`: Environment entry declarations
-- `OrderFulfillmentFacadeEJB.ejbCreate()`: Configuration loading
+## Screen Behavior
 
-### Inventory Population
+### Login Screen (/login.jsp)
 
-Initial inventory data is loaded via `PopulateServlet` at the `/Populate` endpoint, which reads from `/populate/Populate-UTF8.xml`.
+- Rendered when unauthenticated user accesses protected resources
+- Form posts username and password to j_security_check
+- Pre-filled with "supplier" credentials
+- Error page (/error.jsp) shown on auth failure
+- Form-based mechanism: container handles credential validation
 
-**Sources:**
+### Home Page (/index.jsp)
 
-- `web.xml`: PopulateServlet configuration
-- `PopulateServlet.java`: Initialization logic
-
-### Known Limitations
-
-1. **Quantity Validation**: `updateInventory()` accepts any non-negative integer without upper bounds validation. No tests or configuration visible for maximum quantity limits.
-
-2. **Error Handling**: Failed invoice generation in `processAnOrder()` prints to System.out but does not trigger retry, notification, or order status update. No logging framework is configured.
-
-3. **Missing Parameter Handling**: `RcvrRequestProcessor.doPost()` does not explicitly handle missing or null `currentScreen` parameter; would throw `NullPointerException` under this condition.
-
-4. **Entity References**: The order and line item entities are referenced but not fully visible in supplier module source (they reside in separate components). Cross-component entity contracts are not fully documented.
-
-## Implementation Guidance
-
-When implementing this capability in the target system:
-
-1. **Data Model**: Create persistent entities for SupplierOrder, LineItem, and Inventory with the fields described above. Use database transactions for all multi-step operations.
-
-2. **Message Integration**: Implement JMS message receiver for incoming purchase orders. Use a queue for inbound POs and a topic for outbound invoices.
-
-3. **XML Handling**: Parse purchase order XML and generate invoice XML with the field structure described. Support configurable validation.
-
-4. **UI Implementation**: Build web forms for login, inventory display, and inventory updates. Enforce role-based access control at the route level.
-
-5. **Session Management**: Configure session timeout to 54 minutes. Invalidate sessions on logout.
-
-6. **Error Handling**: Add structured logging for invoice generation failures and order processing exceptions. Consider implementing a retry queue for failed fulfillments.
-
-7. **Validation**: Add quantity upper bounds validation. Validate required form parameters before processing.
+- Accessible after successful authentication
+- Displays two navigation options:
+  1. "Display Inventory" button → submits form with currentScreen=displayinventory
+  2. "Logout" button → submits form with currentScreen=logout
+- Both forms POST to RcvrRequestProcessor servlet
+- No direct page display of inventory; delegated to servlet routing
