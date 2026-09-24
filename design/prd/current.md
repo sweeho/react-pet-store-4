@@ -1,6 +1,6 @@
 # React Pet Store 4
 
-_PRD v2. Published from the Design Workbench — edit it there, not here._
+_PRD v3. Published from the Design Workbench — edit it there, not here._
 
 ## Summary
 
