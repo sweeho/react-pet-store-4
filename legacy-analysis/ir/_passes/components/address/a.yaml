@@ -1,0 +1,463 @@
+records:
+  - record_key: ADDRESS-ENT-0001
+    kind: entity
+    capability_key: customer-account
+    requirement: >
+      The system SHALL maintain an Address entity with required fields: street name line 1,
+      city, state, and zip code. Optional fields: street name line 2 and country.
+    confidence: high
+    confidence_basis: >
+      The DTD schema explicitly defines required and optional elements. The CMP field declarations
+      in ejb-jar.xml confirm persistence of all six fields. Both Address.java serialization and
+      AddressEJB implementation consistently enforce this structure across XML, in-memory, and
+      persistent representations.
+    risk_class: operational
+    basis: >
+      DTD declares: StreetName (1 or 2 occurrences, first required), City, State, ZipCode
+      (all required); Country as optional. Address.java constructor accepts all six fields.
+      AddressEJB declares six CMP fields. Address.java toDOM() method conditionally includes
+      streetName2 only if not null/empty (line 147-149), and includes Country (line 153).
+      fromDOM() processes Country element (line 175-176).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/rsrc/schemas/Address.dtd
+        line_start: 38
+        line_end: 43
+        excerpt: |
+          <!ELEMENT Address (StreetName, StreetName?, City, State, ZipCode, Country?)>
+          <!ELEMENT StreetName (#PCDATA)>
+          <!ELEMENT City (#PCDATA)>
+          <!ELEMENT State (#PCDATA)>
+          <!ELEMENT ZipCode (#PCDATA)>
+          <!ELEMENT Country (#PCDATA)>
+      - path: legacy-source/petstore1.3.2/src/components/address/src/ejb-jar.xml
+        line_start: 56
+        line_end: 80
+        excerpt: |
+          <cmp-field>
+            <field-name>zipCode</field-name>
+          </cmp-field>
+          <cmp-field>
+            <field-name>streetName2</field-name>
+          </cmp-field>
+          <cmp-field>
+            <field-name>state</field-name>
+          </cmp-field>
+          <cmp-field>
+            <field-name>streetName1</field-name>
+          </cmp-field>
+          <cmp-field>
+            <field-name>city</field-name>
+          </cmp-field>
+          <cmp-field>
+            <field-name>country</field-name>
+          </cmp-field>
+    stack_metadata:
+      ejb.bean: AddressEJB
+      ejb.persistence-type: Container
+      cmp.version: "2.x"
+
+  - record_key: ADDRESS-BR-0001
+    kind: business-rule
+    capability_key: customer-account
+    requirement: >
+      GIVEN an address is serialized to XML, WHEN the second street line is null or empty,
+      THEN the second StreetName element SHALL NOT be included in the XML output.
+    confidence: high
+    confidence_basis: >
+      The Address.java toDOM() method explicitly checks for null and empty string before
+      appending the second street name. This check is consistently applied at serialization
+      time, and the conditional output is the only logic controlling streetName2 serialization.
+    risk_class: operational
+    basis: >
+      Address.java toDOM() method includes conditional logic at lines 147-149 that only adds
+      a second StreetName element if streetName2 is not null and not empty.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/Address.java
+        line_start: 144
+        line_end: 155
+        excerpt: |
+          public Node toDOM(Document document) {
+            Element root = document.createElement(XML_ADDRESS);
+            XMLDocumentUtils.appendChild(document, root, XML_STREET_NAME, streetName1);
+            if (streetName2 != null && !streetName2.equals("")) {
+              XMLDocumentUtils.appendChild(document, root, XML_STREET_NAME, streetName2);
+            }
+            XMLDocumentUtils.appendChild(document, root, XML_CITY, city);
+            XMLDocumentUtils.appendChild(document, root, XML_STATE, state);
+            XMLDocumentUtils.appendChild(document, root, XML_ZIPCODE, zipCode);
+            XMLDocumentUtils.appendChild(document, root, XML_COUNTRY, country);
+            return root;
+          }
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-BR-0002
+    kind: business-rule
+    capability_key: customer-account
+    requirement: >
+      GIVEN address serialization from DOM, WHEN a second StreetName element is present,
+      THEN the second street line field SHALL be populated from that element;
+      WHEN a second StreetName element is absent, THEN the second street line field SHALL
+      remain null.
+    confidence: high
+    confidence_basis: >
+      The Address.java fromDOM() method uses an optional sibling lookup with a true parameter
+      indicating the element is optional. This is enforced at deserialization time and directly
+      controls population of streetName2.
+    risk_class: operational
+    basis: >
+      Address.java fromDOM() method uses XMLDocumentUtils.getNextSibling() with true (optional)
+      flag to locate the second StreetName element. If found (optionalChild != null), streetName2
+      is populated; otherwise it remains at the default (null).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/Address.java
+        line_start: 157
+        line_end: 180
+        excerpt: |
+          public static Address fromDOM(Node node) throws XMLDocumentException {
+            Element element;
+            if (node.getNodeType() == Node.ELEMENT_NODE && (element = ((Element) node)).getTagName().equals(XML_ADDRESS)) {
+              Element child;
+              Address address = new Address();
+              child = XMLDocumentUtils.getFirstChild(element, XML_STREET_NAME, false);
+              address.streetName1 = XMLDocumentUtils.getContentAsString(child, false);
+              Element optionalChild = XMLDocumentUtils.getNextSibling(child, XML_STREET_NAME, true);
+              if (optionalChild != null) {
+                address.streetName2 = XMLDocumentUtils.getContentAsString(optionalChild, false);
+                child = optionalChild;
+              }
+              child = XMLDocumentUtils.getNextSibling(child, XML_CITY, false);
+              address.city = XMLDocumentUtils.getContentAsString(child, false);
+              child = XMLDocumentUtils.getNextSibling(child, XML_STATE, false);
+              address.state = XMLDocumentUtils.getContentAsString(child, false);
+              child = XMLDocumentUtils.getNextSibling(child, XML_ZIPCODE, false);
+              address.zipCode = XMLDocumentUtils.getContentAsString(child, false);
+              child = XMLDocumentUtils.getNextSibling(child, XML_COUNTRY, false);
+              address.country = XMLDocumentUtils.getContentAsString(child, false);
+              return address;
+            }
+            throw new XMLDocumentException(XML_ADDRESS + " element expected.");
+          }
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-BR-0003
+    kind: business-rule
+    capability_key: customer-account
+    requirement: >
+      The system SHALL enforce container-managed transactions with Required transaction
+      attribute on all Address entity methods (getters, setters, and lifecycle operations).
+    confidence: high
+    confidence_basis: >
+      The ejb-jar.xml deployment descriptor explicitly declares trans-attribute Required
+      for all documented methods. This is a declarative configuration that the EJB container
+      enforces at runtime. Every getter and setter method in the AddressLocal interface
+      has a corresponding <container-transaction> entry.
+    risk_class: operational
+    basis: >
+      ejb-jar.xml <assembly-descriptor> section defines <container-transaction> entries
+      for each method with <trans-attribute>Required</trans-attribute>. Methods covered:
+      getCountry, setStreetName2, setStreetName1, getZipCode, setState, getCity, remove,
+      setZipCode, getStreetName2, getStreetName1, setCountry, getState, setCity, getData.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/ejb-jar.xml
+        line_start: 250
+        line_end: 258
+        excerpt: |
+          <container-transaction>
+            <method>
+              <ejb-name>AddressEJB</ejb-name>
+              <method-intf>Local</method-intf>
+              <method-name>getCountry</method-name>
+              <method-params />
+            </method>
+            <trans-attribute>Required</trans-attribute>
+          </container-transaction>
+      - path: legacy-source/petstore1.3.2/src/components/address/src/ejb-jar.xml
+        line_start: 259
+        line_end: 387
+        excerpt: |
+          (14 additional container-transaction blocks define Required for all
+          getters, setters, remove, and getData methods)
+    stack_metadata:
+      ejb.bean: AddressEJB
+      ejb.transaction: Required
+
+  - record_key: ADDRESS-BR-0004
+    kind: business-rule
+    capability_key: customer-account
+    requirement: >
+      The system SHALL allow unchecked access to all Address entity methods
+      (no authentication or authorization check required).
+    confidence: high
+    confidence_basis: >
+      The ejb-jar.xml deployment descriptor declares all Address methods under a single
+      <method-permission> block with an <unchecked /> element. This is declarative security
+      configuration that the EJB container enforces. No runtime authorization logic exists
+      in the AddressEJB bean class.
+    risk_class: operational
+    basis: >
+      ejb-jar.xml <assembly-descriptor> contains a <method-permission> with <unchecked />
+      tag that covers all methods on AddressEJB (both Local and LocalHome interfaces).
+      The security-identity element also specifies use-caller-identity, indicating the
+      bean runs under the caller's security context.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/ejb-jar.xml
+        line_start: 88
+        line_end: 95
+        excerpt: |
+          <method-permission>
+            <unchecked />
+            <method>
+              <ejb-name>AddressEJB</ejb-name>
+              <method-intf>Local</method-intf>
+              <method-name>getCity</method-name>
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-ENT-0002
+    kind: entity
+    capability_key: customer-account
+    requirement: >
+      The system SHALL support creating Address instances through three distinct creation
+      methods: with all six address field parameters, with a pre-constructed Address object,
+      or with no parameters.
+    confidence: high
+    confidence_basis: >
+      Three create() method signatures are declared in AddressLocalHome interface. Each
+      is implemented in AddressEJB with corresponding ejbCreate/ejbPostCreate lifecycle
+      callbacks. All are marked with unchecked access in ejb-jar.xml.
+    risk_class: operational
+    basis: >
+      AddressLocalHome interface declares three overloaded create() methods at lines 45-50.
+      AddressEJB implements corresponding ejbCreate methods at lines 73-103 (three variants:
+      6 parameters, Address object parameter, and no-arg). ejb-jar.xml declares all three
+      create methods as unchecked.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/AddressLocalHome.java
+        line_start: 43
+        line_end: 53
+        excerpt: |
+          public interface AddressLocalHome extends javax.ejb.EJBLocalHome {
+            public AddressLocal create(String streetName1, String streetName2, String city,
+                                       String state, String zipCode, String country) throws CreateException;
+            public AddressLocal create(Address address) throws CreateException;
+            public AddressLocal create() throws CreateException;
+            public AddressLocal findByPrimaryKey(Object key) throws FinderException;
+          }
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/AddressEJB.java
+        line_start: 71
+        line_end: 103
+        excerpt: |
+          public Object ejbCreate(String streetName1, String streetName2, String city,
+                                  String state, String zipCode, String country) throws CreateException {
+                                    setStreetName1(streetName1);
+                                    setStreetName2(streetName2);
+                                    setCity(city);
+                                    setState(state);
+                                    setZipCode(zipCode);
+                                    setCountry(country);
+                                    return null;
+          }
+          public void ejbPostCreate(String streetName1, String streetName2, String city,
+                                    String state, String zipCode, String country) throws CreateException { }
+          public Object ejbCreate(Address address) throws CreateException {
+            setStreetName1(address.getStreetName1());
+            setStreetName2(address.getStreetName2());
+            setCity(address.getCity());
+            setState(address.getState());
+            setZipCode(address.getZipCode());
+            setCountry(address.getCountry());
+            return null;
+          }
+          public void ejbPostCreate(Address address) throws CreateException { }
+          public Object ejbCreate() throws CreateException {
+            return null;
+          }
+          public void ejbPostCreate() throws CreateException { }
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-REQ-0001
+    kind: requirement
+    capability_key: customer-account
+    requirement: >
+      The system SHALL support serialization of Address entities to DOM (XML) format
+      with proper element ordering: StreetName (may occur once or twice), City, State,
+      ZipCode, Country.
+    confidence: high
+    confidence_basis: >
+      The Address.java class implements toDOM() method that creates XML elements in the
+      specified order. The DTD enforces this element sequence. The method is invoked by
+      other components (PurchaseOrder, SupplierOrder reference Address serialization).
+    risk_class: operational
+    basis: >
+      Address.java toDOM() method creates elements in exact order matching DTD declaration.
+      EntityCatalog.properties registers the Address DTD as a known entity, indicating
+      its use in XML document construction. Method at lines 144-155 constructs and returns
+      a DOM Element with properly ordered children.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/Address.java
+        line_start: 144
+        line_end: 155
+        excerpt: |
+          public Node toDOM(Document document) {
+            Element root = document.createElement(XML_ADDRESS);
+            XMLDocumentUtils.appendChild(document, root, XML_STREET_NAME, streetName1);
+            if (streetName2 != null && !streetName2.equals("")) {
+              XMLDocumentUtils.appendChild(document, root, XML_STREET_NAME, streetName2);
+            }
+            XMLDocumentUtils.appendChild(document, root, XML_CITY, city);
+            XMLDocumentUtils.appendChild(document, root, XML_STATE, state);
+            XMLDocumentUtils.appendChild(document, root, XML_ZIPCODE, zipCode);
+            XMLDocumentUtils.appendChild(document, root, XML_COUNTRY, country);
+            return root;
+          }
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-REQ-0002
+    kind: requirement
+    capability_key: customer-account
+    requirement: >
+      The system SHALL support deserialization of Address entities from DOM (XML) format,
+      validating that required elements (StreetName, City, State, ZipCode) are present
+      and throwing XMLDocumentException if the root element is not an Address element.
+    confidence: high
+    confidence_basis: >
+      The Address.java fromDOM() method explicitly validates the root element type and
+      throws XMLDocumentException if it is not XML_ADDRESS. It uses false (required) flags
+      for mandatory fields. All required field lookups will propagate an exception if a
+      required element is missing.
+    risk_class: operational
+    basis: >
+      Address.java fromDOM() method at lines 159-160 validates element type and throws
+      XMLDocumentException at line 179. Required element lookups use false flag (e.g., line 162
+      for first StreetName), and required fields have no null-check (lines 170, 171, 173, 175).
+      Optional elements like the second StreetName and Country use true flag, allowing null.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/Address.java
+        line_start: 157
+        line_end: 180
+        excerpt: |
+          public static Address fromDOM(Node node) throws XMLDocumentException {
+            Element element;
+            if (node.getNodeType() == Node.ELEMENT_NODE && (element = ((Element) node)).getTagName().equals(XML_ADDRESS)) {
+              Element child;
+              Address address = new Address();
+              child = XMLDocumentUtils.getFirstChild(element, XML_STREET_NAME, false);
+              address.streetName1 = XMLDocumentUtils.getContentAsString(child, false);
+              Element optionalChild = XMLDocumentUtils.getNextSibling(child, XML_STREET_NAME, true);
+              if (optionalChild != null) {
+                address.streetName2 = XMLDocumentUtils.getContentAsString(optionalChild, false);
+                child = optionalChild;
+              }
+              child = XMLDocumentUtils.getNextSibling(child, XML_CITY, false);
+              address.city = XMLDocumentUtils.getContentAsString(child, false);
+              child = XMLDocumentUtils.getNextSibling(child, XML_STATE, false);
+              address.state = XMLDocumentUtils.getContentAsString(child, false);
+              child = XMLDocumentUtils.getNextSibling(child, XML_ZIPCODE, false);
+              address.zipCode = XMLDocumentUtils.getContentAsString(child, false);
+              child = XMLDocumentUtils.getNextSibling(child, XML_COUNTRY, false);
+              address.country = XMLDocumentUtils.getContentAsString(child, false);
+              return address;
+            }
+            throw new XMLDocumentException(XML_ADDRESS + " element expected.");
+          }
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-REQ-0003
+    kind: requirement
+    capability_key: customer-account
+    requirement: >
+      The system SHALL support retrieval of Address entity data as a unified object
+      through the getData() method, which returns an Address value object containing
+      all six fields.
+    confidence: high
+    confidence_basis: >
+      The AddressEJB bean implements getData() method that constructs and returns an
+      Address object populated from all CMP fields. The AddressLocal interface declares
+      this method. It is registered as an unchecked operation in ejb-jar.xml with Required
+      transaction attribute.
+    risk_class: operational
+    basis: >
+      AddressEJB implements getData() at lines 105-114, which constructs a new Address
+      object and populates it from all six CMP fields before returning it. AddressLocal
+      interface declares getData() at line 61. ejb-jar.xml declares getData() as unchecked
+      and Required transaction at lines 380-387.
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/AddressEJB.java
+        line_start: 105
+        line_end: 114
+        excerpt: |
+          public Address getData() {
+            Address address = new Address();
+            address.setStreetName1(getStreetName1());
+            address.setStreetName2(getStreetName2());
+            address.setCity(getCity());
+            address.setState(getState());
+            address.setZipCode(getZipCode());
+            address.setCountry(getCountry());
+            return address;
+          }
+    stack_metadata:
+      ejb.bean: AddressEJB
+
+  - record_key: ADDRESS-ENT-0003
+    kind: entity
+    capability_key: customer-account
+    requirement: >
+      The Address entity SHALL support primary key lookup through findByPrimaryKey(Object key)
+      method on the AddressLocalHome interface. The primary key class is java.lang.Object.
+    confidence: medium
+    confidence_basis: >
+      AddressLocalHome interface declares findByPrimaryKey() at line 52. ejb-jar.xml specifies
+      prim-key-class as java.lang.Object at line 53, and declares findByPrimaryKey as
+      unchecked. However, the actual primary key field name is not declared in the bean class,
+      which is typical for CMP 2.x where the container generates the primary key field. This
+      is a medium confidence because the implementation detail (which field is the key) is not
+      explicitly visible.
+    risk_class: operational
+    basis: >
+      AddressLocalHome interface declares findByPrimaryKey(Object key) at line 52. ejb-jar.xml
+      declares <prim-key-class>java.lang.Object</prim-key-class> at line 53, and includes
+      a <method-permission> entry for LocalHome findByPrimaryKey at lines 236-240. The actual
+      primary key CMP field is not explicitly named in the visible code (typical for CMP 2.x).
+    traces:
+      - path: legacy-source/petstore1.3.2/src/components/address/src/com/sun/j2ee/blueprints/address/ejb/AddressLocalHome.java
+        line_start: 43
+        line_end: 53
+        excerpt: |
+          public interface AddressLocalHome extends javax.ejb.EJBLocalHome {
+            public AddressLocal create(String streetName1, String streetName2, String city,
+                                       String state, String zipCode, String country) throws CreateException;
+            public AddressLocal create(Address address) throws CreateException;
+            public AddressLocal create() throws CreateException;
+            public AddressLocal findByPrimaryKey(Object key) throws FinderException;
+          }
+      - path: legacy-source/petstore1.3.2/src/components/address/src/ejb-jar.xml
+        line_start: 46
+        line_end: 56
+        excerpt: |
+          <entity>
+            <display-name>AddressEJB</display-name>
+            <ejb-name>AddressEJB</ejb-name>
+            <local-home>com.sun.j2ee.blueprints.address.ejb.AddressLocalHome</local-home>
+            <local>com.sun.j2ee.blueprints.address.ejb.AddressLocal</local>
+            <ejb-class>com.sun.j2ee.blueprints.address.ejb.AddressEJB</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Object</prim-key-class>
+    stack_metadata:
+      ejb.bean: AddressEJB
+      ejb.persistence-type: Container
+
+findings:
+  - kind: ambiguity
+    path: legacy-source/petstore1.3.2/src/components/address/src/ejb-jar.xml
+    description: >
+      The primary key class is declared as java.lang.Object (line 53), which is unusual
+      and likely a container-generated class. The actual primary key field name is not
+      declared in the CMP fields or the abstract bean class. This is typical for CMP 2.x
+      but makes the primary key identity unclear without examining the deployment
+      descriptor vendor-specific mappings (not visible in this extraction).
