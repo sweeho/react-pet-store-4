@@ -1,4 +1,4 @@
-<!-- Published by Vortex from the project's Design Reference, version 5. Edit it in the Design Workbench. -->
+<!-- Published by Vortex from the project's Design Reference, version 6. Edit it in the Design Workbench. -->
 
 # Meridian Web Design Guide
 
